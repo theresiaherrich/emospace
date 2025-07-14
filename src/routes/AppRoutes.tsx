@@ -5,6 +5,8 @@ import LoginPage from '../pages/login';
 import MainLayout from '../layouts/mainLayout';
 import HomePage from '../pages/home';
 import AISpace from '../pages/aispace';
+import { ChatbotLayout } from '../layouts/chatbotLayout';
+import SpaceChatbotPage from '../pages/spaceChatbot';
 
 const AppRoutes = () => {
   return (
@@ -16,6 +18,9 @@ const AppRoutes = () => {
       <Route element={<MainLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/aispace" element={<AISpace />} />
+      </Route>
+      <Route element={<ChatbotLayout />}>
+        <Route path="/space-chat" element={<SpaceChatbotPage />} />
       </Route>
     </Routes>
   );

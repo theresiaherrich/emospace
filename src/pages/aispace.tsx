@@ -1,7 +1,9 @@
+import AispaceContainer from "../features/aispace/pages/aispaceContainer";
+
 const AISpace = () => {
     return (
         <div>
-            <h1>AISpace</h1>
+            <AispaceContainer />
         </div>
     );
 }
