@@ -13,6 +13,7 @@ export default {
         'home': "url('/assets/bg-home.svg')",
         'aispace': "url('/assets/AISpace-bg.svg')",
         'chatbot': "url('/assets/chatbot-bg.svg')",
+        'specialist': "url('/assets/specialist-bg.svg')",
       },
       colors: {
         'primary': '#593187',

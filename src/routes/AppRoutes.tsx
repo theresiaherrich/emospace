@@ -7,6 +7,7 @@ import HomePage from '../pages/home';
 import AISpace from '../pages/aispace';
 import { ChatbotLayout } from '../layouts/chatbotLayout';
 import SpaceChatbotPage from '../pages/spaceChatbot';
+import SpecialistPage from '../pages/specialist';
 
 const AppRoutes = () => {
   return (
@@ -18,6 +19,7 @@ const AppRoutes = () => {
       <Route element={<MainLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/aispace" element={<AISpace />} />
+        <Route path="/specialist" element={<SpecialistPage />} />
       </Route>
       <Route element={<ChatbotLayout />}>
         <Route path="/space-chat" element={<SpaceChatbotPage />} />
