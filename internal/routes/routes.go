@@ -12,6 +12,7 @@ func SetupRoutes() *gin.Engine {
 	r := gin.Default()
 
 	r.SetTrustedProxies(nil)
+	r.ForwardedByClientIP = true
 
 	db := config.DB
 
