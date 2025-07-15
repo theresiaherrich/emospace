@@ -1,8 +1,57 @@
+# Go build artifacts
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go modules and workspace
+go.sum
+go.work
+go.work.sum
+
+# Build / Binary output
+/bin/
+/build/
+/dist/
+
+# Logs
+*.log
+logs/
+
+# Environment config
 .env
+.env.*
 .env.local
-.sql
-main.go
+
+# Docker-related
+*.tar
+docker-compose.override.yml
+.docker/
+.dockerignore
+
+# Database
+*.sql
 database.sql
 
-#log files
-logs
+# Main app file (optional, only ignore if not needed in repo)
+# main.go  <-- Hapus komen ini kalau kamu memang mau exclude main.go
+
+# IDE / Editor configs
+.vscode/
+.idea/
+*.swp
+*.sublime-project
+*.sublime-workspace
+
+# OS / system files
+.DS_Store
+Thumbs.db
+
+# Frontend (optional)
+node_modules/
+
+# Coverage
+*.coverprofile
+coverage.out
