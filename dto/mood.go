@@ -7,5 +7,5 @@ type MoodRequest struct {
 type MoodCalendarResponse struct {
 	Date     string `json:"date"`       // format: 2025-07-01
 	MoodCode string `json:"mood_code"`  // contoh: "MOOD_HAPPY"
-	Color    string `json:"color"`      // frontend pakai ini buat kalender
+	Color    string `json:"color"`      
 }

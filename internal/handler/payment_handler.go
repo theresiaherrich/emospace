@@ -16,7 +16,6 @@ func NewPaymentHandler(service service.PaymentService) *PaymentHandler {
 	return &PaymentHandler{Service: service}
 }
 
-// Ambil Snap Token berdasarkan planID
 func (h *PaymentHandler) GetSnapTokenFromPlan(c *gin.Context) {
 	userID := c.GetUint("user_id")
 	planIDStr := c.Param("planID")
@@ -39,7 +38,6 @@ func (h *PaymentHandler) GetSnapTokenFromPlan(c *gin.Context) {
 	})
 }
 
-// Callback dari Midtrans
 func (h *PaymentHandler) PaymentCallback(c *gin.Context) {
 	var payload map[string]interface{}
 	if err := c.ShouldBindJSON(&payload); err != nil {

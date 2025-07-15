@@ -29,7 +29,6 @@ func GenerateAIResponse(user *models.User, mood string, userMessage string, repo
 		return "", err
 	}
 
-	// Simpan riwayat ke database
 	repo.SaveChat(models.ChatLog{
 		UserID:    user.ID,
 		UserName:  user.Username,
@@ -47,7 +46,7 @@ func SearchUserInputOnly(userName, keyword string, repo repository.ChatRepositor
 
 func CanUserChat(user *models.User, chatRepo repository.ChatRepository) (bool, error) {
 	if user.IsPremium && user.PremiumUntil != nil && user.PremiumUntil.After(time.Now()) {
-		return true, nil // Premium user, akses tak terbatas
+		return true, nil 
 	}
 
 	today := time.Now()
@@ -57,7 +56,7 @@ func CanUserChat(user *models.User, chatRepo repository.ChatRepository) (bool, e
 	}
 
 	if count >= 10 {
-		return false, nil // Sudah capai limit harian
+		return false, nil 
 	}
 
 	return true, nil

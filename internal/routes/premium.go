@@ -8,9 +8,9 @@ import (
 func RegisterPlanRoutes(rg *gin.RouterGroup, planHandler *handler.PlanHandler) {
 	plan := rg.Group("/plans")
 	{
-		plan.GET("", planHandler.GetPlans)        // Ambil semua premium plan
-		plan.POST("", planHandler.CreatePlan)     // Buat plan baru
-		plan.PUT(":id", planHandler.UpdatePlan)   // Edit plan berdasarkan ID
-		plan.DELETE(":id", planHandler.DeletePlan) // Hapus plan berdasarkan ID
+		plan.GET("", planHandler.GetPlans)        
+		plan.POST("", planHandler.CreatePlan)     
+		plan.PUT(":id", planHandler.UpdatePlan)   
+		plan.DELETE(":id", planHandler.DeletePlan) 
 	}
 }

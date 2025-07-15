@@ -13,13 +13,10 @@ FROM alpine:latest
 
 WORKDIR /home/app
 
-# ⬅️ Copy binary yang sudah dibuild
 COPY --from=builder /home/app/server .
 
-# ⬅️ Tambahkan ini untuk menyalin .env ke image final
 COPY --from=builder /home/app/.env .
 
-# (Opsional) pastikan server bisa dijalankan
 RUN chmod +x /home/app/server
 
 CMD ["/home/app/server"]

@@ -15,9 +15,8 @@ func NewUserHandler(userService service.UserService) *UserHandler {
 	return &UserHandler{userService}
 }
 
-// GET /api/user/profile
 func (h *UserHandler) GetProfile(c *gin.Context) {
-	userID := c.GetUint("user_id") // dari JWT middleware
+	userID := c.GetUint("user_id") 
 
 	user, err := h.userService.GetByID(userID)
 	if err != nil {
@@ -28,18 +27,15 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, h.userService.ToProfileResponse(user))
 }
 
-// PUT /api/user/profile
 func (h *UserHandler) UpdateProfile(c *gin.Context) {
 	userID := c.GetUint("user_id")
 
-	// Ambil data user dari DB
 	user, err := h.userService.GetByID(userID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
 
-	// Ambil data satu per satu
 	if v := c.PostForm("name"); v != "" {
 		user.Name = v
 	}
@@ -63,7 +59,6 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 		user.BirthDate = v
 	}
 
-	// Upload foto profil jika dikirim
 	file, fileHeader, err := c.Request.FormFile("profile_picture")
 	if err == nil && file != nil {
 		imageURL, err := utils.UploadImageToSupabase(file, fileHeader, userID)
@@ -74,7 +69,6 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 		user.ProfilePicture = imageURL
 	}
 
-	// Validasi dan simpan perubahan
 	if err := h.userService.UpdateUser(user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

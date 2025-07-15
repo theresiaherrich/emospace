@@ -15,7 +15,6 @@ func SetupRoutes() *gin.Engine {
 
 	db := config.DB
 
-	// === Dependency Injection ===
 	userRepo := repository.NewUserRepo(db)
 	userService := service.NewUserService(userRepo)
 	authHandler := handler.NewAuthHandler(userService)
@@ -36,7 +35,6 @@ func SetupRoutes() *gin.Engine {
 	paymentHandler := handler.NewPaymentHandler(paymentService)
 
 	
-	// === Modular Routes ===
 	api := r.Group("/api")
 	RegisterAuthRoutes(api, authHandler)
 	RegisterMoodRoutes(api, moodHandler)
@@ -44,7 +42,6 @@ func SetupRoutes() *gin.Engine {
 	RegisterPaymentRoutes(api, paymentHandler)
 	RegisterPlanRoutes(api, planHandler)
 	RegisterUserRoutes(api, userHandler)
-
 
 	return r
 }

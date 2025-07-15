@@ -13,7 +13,6 @@ import (
 var DB *gorm.DB
 
 func InitDB() {
-	// Ambil environment variable
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
 		os.Getenv("DB_USER"),
 		os.Getenv("DB_PASS"),

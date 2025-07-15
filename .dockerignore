@@ -1,4 +1,50 @@
-.git
+# Binaries
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Build output
+/bin
+/build
+/dist
+
+# Logs
 *.log
+logs/
+
+# Git & VCS
+.git
+.gitignore
+.gitattributes
+
+# Config & secrets
+.env
+.env.*
+.env.local
+
+# Docker
+*.tar
+.dockerignore
+docker-compose.override.yml
+
+# Database
+*.sql
+database.sql
+
+# IDE / Editor
+.vscode
+.idea
+*.swp
+*.sublime-*
+
+# Node / frontend (opsional)
 node_modules
 vendor
+
+
+# Coverage
+*.coverprofile
+coverage.out

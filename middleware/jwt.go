@@ -67,14 +67,12 @@ func JWTMiddleware() gin.HandlerFunc {
 		}
 		userID := uint(userIDFloat)
 
-		// === Ambil user ===
 		var user models.User
 		if err := config.DB.First(&user, userID).Error; err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized - User not found"})
 			return
 		}
 
-		// === Ambil mood terbaru ===
 		var mood models.Mood
 		if err := config.DB.
 			Where("user_id = ?", user.ID).
@@ -85,7 +83,6 @@ func JWTMiddleware() gin.HandlerFunc {
 			c.Set("mood", mood.MoodCode)
 		}
 
-		// Simpan ke context
 		c.Set("user_id", user.ID)
 		c.Set("user_name", user.Username)
 

@@ -20,7 +20,6 @@ func NewAIHandler(chatRepo repository.ChatRepository, userRepo repository.UserRe
 	return &AIHandler{ChatRepo: chatRepo, UserRepo: userRepo}
 }
 
-// GET /api/ai/welcome
 func (h *AIHandler) Welcome(c *gin.Context) {
 	userName := c.GetString("user_name")
 
@@ -38,7 +37,6 @@ func (h *AIHandler) Welcome(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.AIResponseDTO{Response: message})
 }
 
-// POST /api/ai/chat
 func (h *AIHandler) HandleChat(c *gin.Context) {
 	var input dto.AIUserInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -83,7 +81,6 @@ func (h *AIHandler) HandleChat(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.AIResponseDTO{Response: response})
 }
 
-// GET /api/ai/search?query=...
 func (h *AIHandler) SearchUserInputOnly(c *gin.Context) {
 	userName := c.GetString("user_name")
 	keyword := c.Query("query")
