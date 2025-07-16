@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "../../../components/ui/button";
 import Input from "../../../components/ui/input";
 import Dropdown from "../../../components/ui/dropdown";
-import CalendarPicker from "../../../components/ui/calendar";
+import { CalendarPicker } from "../../../components/ui/calendar";
 
 const genderOptions = ["Male", "Female"];
 
@@ -85,6 +85,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
             value={field.value}
             onChange={field.onChange}
             required
+            variant="day"
           />
         )}
       />

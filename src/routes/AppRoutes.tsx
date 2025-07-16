@@ -8,23 +8,31 @@ import AISpace from '../pages/aispace';
 import { ChatbotLayout } from '../layouts/chatbotLayout';
 import SpaceChatbotPage from '../pages/spaceChatbot';
 import SpecialistPage from '../pages/specialist';
+import MyjournalPage from '../pages/myjournal';
+import DetailJournalPage from '../pages/detailjournal';
+import ScrollToTop from '../components/scrolltotop';
 
 const AppRoutes = () => {
   return (
-    <Routes>
-      <Route element={<AuthLayout />}>
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/login" element={<LoginPage />} />
-      </Route>
-      <Route element={<MainLayout />}>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/aispace" element={<AISpace />} />
-        <Route path="/specialist" element={<SpecialistPage />} />
-      </Route>
-      <Route element={<ChatbotLayout />}>
-        <Route path="/space-chat" element={<SpaceChatbotPage />} />
-      </Route>
-    </Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
+        <Route element={<AuthLayout />}>
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
+        </Route>
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/aispace" element={<AISpace />} />
+          <Route path="/specialist" element={<SpecialistPage />} />
+          <Route path="/my-journal" element={<MyjournalPage />} />
+          <Route path="/my-journal/detail/:id" element={<DetailJournalPage />} />
+        </Route>
+        <Route element={<ChatbotLayout />}>
+          <Route path="/space-chat" element={<SpaceChatbotPage />} />
+        </Route>
+      </Routes>
+    </>
   );
 };
 

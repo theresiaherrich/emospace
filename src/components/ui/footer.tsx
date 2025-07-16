@@ -2,7 +2,7 @@ import { Instagram, Twitter, Facebook, Youtube } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-[#593187] text-white font-spartan py-10 w-full">
+    <footer className="bg-[#593187] text-white font-spartan py-10 w-full bottom-0">
       <div className="ml-4 md:ml-10 lg:ml-20 lg:mr-80">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           <div className="flex flex-col gap-4 w-full max-w-[265px]">
