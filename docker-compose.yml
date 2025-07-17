@@ -1,4 +1,3 @@
-
 services:
   app:
     build: 
@@ -10,13 +9,13 @@ services:
     env_file:
       - .env
     depends_on:
-      mysql:
+      emospaces_db:
         condition: service_healthy
     restart: unless-stopped
     networks:
       - emonet
 
-  mysql:
+  emospaces_db:
     image: mysql:5.7
     container_name: emospaces_db
     ports:
@@ -24,6 +23,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: emospaces
+      MYSQL_ALLOW_EMPTY_PASSWORD: "no"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
