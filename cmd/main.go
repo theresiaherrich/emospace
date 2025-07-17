@@ -1,18 +1,29 @@
 package main
 
 import (
+	"log"
+	"os"
+
 	"emospaces-backend/config"
 	"emospaces-backend/internal/routes"
-	"log"
-
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-    log.Println(".env file not found, relying on environment variables.")}
+	requiredEnvs := []string{"DB_HOST", "DB_PORT", "DB_USER", "DB_PASS", "DB_NAME"}
+	for _, env := range requiredEnvs {
+		if os.Getenv(env) == "" {
+			log.Fatalf("Missing required environment variable: %s", env)
+		}
+	}
 
-	config.InitDB()
+	if err := config.InitDB(); err != nil {
+		log.Fatalf("Database initialization failed: %v", err)
+	}
+
 	r := routes.SetupRoutes()
-	log.Fatal(r.Run(":8080"))
+
+	log.Println("Server is running on port 8080...")
+	if err := r.Run(":8080"); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
 }
