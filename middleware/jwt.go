@@ -1,12 +1,14 @@
 package middleware
 
 import (
+	"emospaces-backend/config"
+	"emospaces-backend/internal/models"
+	"fmt"
 	"net/http"
 	"os"
 	"strings"
 	"time"
-	"emospaces-backend/config" 
-	"emospaces-backend/internal/models"
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -14,9 +16,9 @@ import (
 func GenerateToken(userID uint, rememberMe bool) (string, error) {
 	var expiry time.Duration
 	if rememberMe {
-		expiry = time.Hour * 24 * 7 // 7 days
+		expiry = time.Hour * 24 * 7 // 7 hari
 	} else {
-		expiry = time.Hour * 24 // 1 day
+		expiry = time.Hour * 24 // 1 hari
 	}
 
 	claims := jwt.MapClaims{
@@ -45,10 +47,13 @@ func JWTMiddleware() gin.HandlerFunc {
 		}
 
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			}
 			return []byte(os.Getenv("JWT_SECRET")), nil
 		})
-
 		if err != nil || !token.Valid {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized - Token invalid"})
 			return
@@ -57,6 +62,11 @@ func JWTMiddleware() gin.HandlerFunc {
 		claims, ok := token.Claims.(jwt.MapClaims)
 		if !ok || !token.Valid {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized - Invalid claims"})
+			return
+		}
+
+		if exp, ok := claims["exp"].(float64); ok && int64(exp) < time.Now().Unix() {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Token expired"})
 			return
 		}
 
@@ -74,15 +84,13 @@ func JWTMiddleware() gin.HandlerFunc {
 		}
 
 		var mood models.Mood
-		if err := config.DB.
-			Where("user_id = ?", user.ID).
-			Order("date desc").
-			First(&mood).Error; err != nil {
+		if err := config.DB.Where("user_id = ?", user.ID).Order("date desc").First(&mood).Error; err != nil {
 			c.Set("mood", "MOOD_UNKNOWN")
 		} else {
 			c.Set("mood", mood.MoodCode)
 		}
 
+		// Set data user ke context
 		c.Set("user_id", user.ID)
 		c.Set("user_name", user.Username)
 

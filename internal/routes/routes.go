@@ -13,7 +13,7 @@ import (
 func SetupRoutes() *gin.Engine {
 	r := gin.Default()
 
-	r.SetTrustedProxies(nil)
+	r.SetTrustedProxies([]string{"127.0.0.1"})
 	r.ForwardedByClientIP = true
 
 	db := config.DB
