@@ -11,10 +11,18 @@ import (
 )
 
 func SetupRoutes() *gin.Engine {
-	r := gin.Default()
+	gin.SetMode(gin.ReleaseMode) 
 
-	r.SetTrustedProxies([]string{"127.0.0.1"})
-	r.ForwardedByClientIP = true
+    r := gin.Default()
+    r.SetTrustedProxies(nil)
+    r.ForwardedByClientIP = true
+
+    r.Use(func(c *gin.Context) {
+        if c.Request.Header.Get("X-Forwarded-Proto") == "https" {
+            c.Request.URL.Scheme = "https"
+        }
+        c.Next()
+    })
 
 	db := config.DB
 
