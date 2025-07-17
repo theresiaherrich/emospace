@@ -20,6 +20,8 @@ func InitDB() error {
 		os.Getenv("DB_PORT"),
 		os.Getenv("DB_NAME"),
 	)
+	
+	fmt.Println("DSN:", dsn)
 
 	var db *gorm.DB
 	var err error
