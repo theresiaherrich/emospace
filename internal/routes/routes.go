@@ -5,6 +5,8 @@ import (
 	"emospaces-backend/internal/handler"
 	"emospaces-backend/internal/repository"
 	"emospaces-backend/internal/service"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -43,6 +45,11 @@ func SetupRoutes() *gin.Engine {
 	RegisterPaymentRoutes(api, paymentHandler)
 	RegisterPlanRoutes(api, planHandler)
 	RegisterUserRoutes(api, userHandler)
+
+	r.GET("/", func(c *gin.Context) {
+    c.JSON(http.StatusOK, gin.H{"message": "EmoSpace backend is running 🚀"})
+	})
+
 
 	return r
 }
