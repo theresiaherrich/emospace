@@ -4,6 +4,7 @@ import (
 	"emospaces-backend/internal/models"
 	"fmt"
 	"os"
+	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -20,9 +21,21 @@ func InitDB() error {
 		os.Getenv("DB_NAME"),
 	)
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	var db *gorm.DB
+	var err error
+	maxRetries := 10
+
+	for i := 0; i < maxRetries; i++ {
+		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+		if err == nil {
+			break
+		}
+		fmt.Printf("Attempt %d/%d: Failed to connect to database: %v\n", i+1, maxRetries, err)
+		time.Sleep(3 * time.Second)
+	}
+
 	if err != nil {
-		return fmt.Errorf("failed to connect to database: %w", err)
+		return fmt.Errorf("could not connect to database after %d attempts: %w", maxRetries, err)
 	}
 
 	err = db.AutoMigrate(&models.User{}, &models.Mood{}, &models.ChatLog{}, &models.PremiumPlan{})
