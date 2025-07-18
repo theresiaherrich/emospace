@@ -93,7 +93,7 @@ const HomeContainer: React.FC = () => {
               <img src="/assets/logo-journal.svg" alt="" className="w-40" />
               <Button
                 className="text-base md:text-xl font-semibold font-spartan bg-[#DCC5ED] rounded-[150px] border-2 border-[#341A554D] w-full py-4 hover:bg-[#d1b2ea]"
-                onClick={() => navigate("/journal")}
+                onClick={() => navigate("/my-journal/detail/new")}
               >
                 Add New Journal
               </Button>

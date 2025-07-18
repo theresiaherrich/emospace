@@ -50,7 +50,7 @@ const SpecialistContainer: React.FC = () => {
 
     return (
         <div className="bg-[#F3F3F3] bg-cover bg-no-repeat min-h-screen w-full relative overflow-hidden">
-            <img src="/assets/gradient-purple.svg" alt="" className="absolute top-[-250px] left-10 w-[500px] sm:w-[600px] md:w-[700px]"/>
+            <img src="/assets/gradient-purple.svg" alt="" className="absolute top-[-250px] left-10"/>
             <img src="/assets/cloud.svg" alt="" className="absolute top-20 left-1/2 transform -translate-x-1/2 w-40 sm:w-56 md:w-72"/>
             <div className="pt-32 sm:pt-40 flex flex-col min-h-screen relative z-10 px-4 sm:px-8">
                 <div className="mb-6 relative text-center">
@@ -61,11 +61,12 @@ const SpecialistContainer: React.FC = () => {
                     <img src="/assets/bintang-1.svg" alt="" className="absolute top-2 right-1/4 w-4 sm:w-5"
                     />
                 </div>
-                <div className="flex justify-center">
-                    <div className="max-w-xl w-full justify-center">
+                <div className="flex justify-center mx-auto">
+                    <div className="w-full justify-center">
                         <SearchBar
                             onSearch={setSearchQuery}
                             placeholder="Search by Expertise, Symptomps, Rating, etc"
+                            className=""
                         />
                     </div>
                 </div>
