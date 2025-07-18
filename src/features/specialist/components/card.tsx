@@ -1,7 +1,6 @@
 import Card from "../../../components/ui/card";
 import { Briefcase, ThumbsUp } from "lucide-react";
 import Button from "../../../components/ui/button";
-import { useNavigate } from "react-router-dom";
 
 interface CardProps {
     name: string;
@@ -10,10 +9,11 @@ interface CardProps {
     expertise: string;
     experience: string;
     rating: string;
+    price: number;
+    onClick: () => void;
 }
 
-const CardSpecialist: React.FC<CardProps> = ({ name, photo, job, expertise, experience, rating  }) => {
-    const navigate = useNavigate();
+const CardSpecialist: React.FC<CardProps> = ({ name, photo, job, expertise, experience, rating, price, onClick  }) => {
 
     return (
         <Card className="bg-[#E9DDF4] border border-[#666666] max-w-[360px]">
@@ -36,8 +36,8 @@ const CardSpecialist: React.FC<CardProps> = ({ name, photo, job, expertise, expe
                 </div>
             </div>
             <div className="flex justify-between mt-2 items-center">
-                <h1 className="font-spartan text-opacity-60 text-sm font-bold text-[#593187]">Rp 50.000</h1>
-                <Button variant="primary" className="text-xs font-semibold bg-[#593187] rounded-md py-1 px-6 opacity-65 backdrop-blur-sm" onClick={() => navigate("/chat")}>
+                <h1 className="font-spartan text-opacity-60 text-sm font-bold text-[#593187]">Rp {price.toLocaleString('id-ID')}</h1>
+                <Button variant="primary" className="text-xs font-semibold bg-[#593187] rounded-md py-1 px-6 opacity-65 backdrop-blur-sm" onClick={onClick}>
                     Chat
                 </Button>
             </div>

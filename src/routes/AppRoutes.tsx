@@ -11,6 +11,8 @@ import SpecialistPage from '../pages/specialist';
 import MyjournalPage from '../pages/myjournal';
 import DetailJournalPage from '../pages/detailjournal';
 import ScrollToTop from '../components/scrolltotop';
+import PremiumPage from '../pages/premium';
+import PaymentPage from '../pages/payment';
 
 const AppRoutes = () => {
   return (
@@ -27,6 +29,8 @@ const AppRoutes = () => {
           <Route path="/specialist" element={<SpecialistPage />} />
           <Route path="/my-journal" element={<MyjournalPage />} />
           <Route path="/my-journal/detail/:id" element={<DetailJournalPage />} />
+          <Route path="/premium" element={<PremiumPage />} />
+          <Route path="/payment" element={<PaymentPage />} />
         </Route>
         <Route element={<ChatbotLayout />}>
           <Route path="/space-chat" element={<SpaceChatbotPage />} />

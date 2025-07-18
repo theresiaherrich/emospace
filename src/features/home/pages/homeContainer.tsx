@@ -59,8 +59,9 @@ const HomeContainer: React.FC = () => {
                   </div>
                   <a href="#" className="text-xs font-medium text-[#9F53FF]">View all</a>
                 </div>
-                <div className="flex items-center justify-center text-base font-medium text-[#1C1C1C] text-opacity-60 text-center">
-                  Unlock Premium to Access This Feature
+                <div className="flex flex-col items-center justify-center h-full">
+                  <p className="font-medium text-[#1C1C1C] text-opacity-60 text-center">Unlock Premium to Access This Feature</p>
+                  <a href="/premium" className="text-[#593187] font-medium text-opacity-60 text-center">Click Here to Upgrade With Rp 29.000 Only!</a>
                 </div>
               </Card>
             </div>

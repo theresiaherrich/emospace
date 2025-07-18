@@ -22,6 +22,15 @@ export default {
         spartan: ['League Spartan', 'sans-serif'],
         lexend: ['Lexend', 'sans-serif'],
       },
+      keyframes: {
+        scrollX: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' }, // setengah, karena duplikat isi
+        },
+      },
+      animation: {
+        'scroll-x': 'scrollX 20s linear infinite',
+      },
     },
   },
   plugins: [],

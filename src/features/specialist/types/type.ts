@@ -1,4 +1,4 @@
-interface dataSpecialist {
+export interface dataSpecialist {
     id: number;
     name: string;
     photo: string;
@@ -6,9 +6,10 @@ interface dataSpecialist {
     expertise: string;
     experience: string;
     rating: string;
+    price: number;
 }
 
-export const dataSpecialist: dataSpecialist[] = [
+export const dataSpecialists: dataSpecialist[] = [
     {
         id: 1,
         name: "Luluk Permatasari S.psi, M. Psi, Psikolog",
@@ -16,7 +17,8 @@ export const dataSpecialist: dataSpecialist[] = [
         job: "Psikolog Klinis Anak",
         expertise: "Keluarga",
         experience: "3 tahun",
-        rating: "90%"
+        rating: "90%",
+        price: 50000
     },
     {
         id: 2,
@@ -25,7 +27,8 @@ export const dataSpecialist: dataSpecialist[] = [
         job: "Psikolog Klinis Dewasa",
         expertise: "Stress",
         experience: "1 tahun",
-        rating: "85%"
+        rating: "85%",
+        price: 50000
     },
     {
         id: 3,
@@ -34,6 +37,7 @@ export const dataSpecialist: dataSpecialist[] = [
         job: "Psikolog Klinis Remaja",
         expertise: "Stress, Keluarga dan Hubungan",
         experience: "2 tahun",
-        rating: "100%"
+        rating: "100%",
+        price: 50000
     },
 ];

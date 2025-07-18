@@ -36,35 +36,37 @@ const SearchBar: React.FC<SearchBarProps> = ({
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       {expanded && (
-        <div className="relative w-[600px]">
+        <div className="relative w-full max-w-xl sm:max-w-md md:max-w-lg">
           <input
             type="text"
             placeholder={placeholder}
             value={query}
             onChange={handleInputChange}
-            className="rounded-full px-4 py-2 border border-[#633796] font-spartan text-sm font-medium items-center focus:outline-none h-8 w-[600px] shadow-[5px_5px_10px_0px_#00000040]"
+            className="w-full rounded-full px-4 py-2 border border-[#633796] font-spartan text-sm font-medium focus:outline-none h-10 shadow-[5px_5px_10px_0px_#00000040]"
           />
           {!expandable ? (
             <button>
               <Search className="absolute bg-[#633796] rounded-full p-1 right-3 top-1/2 transform -translate-y-1/2 text-white w-6 h-6" />
             </button>
           ) : (
-            <div>
-              <button className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <ChevronDownIcon className="w-4 h-4" />
-              </button>
-              <button className="absolute right-8 top-1/2 transform -translate-y-1/2">
+            <button
+              onClick={handleToggleExpand}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#633796]"
+            >
+              {expanded ? (
                 <ChevronUpIcon className="w-4 h-4" />
-              </button>
-            </div>
+              ) : (
+                <ChevronDownIcon className="w-4 h-4" />
+              )}
+            </button>
           )}
         </div>
       )}
 
-      {expandable && (
+      {expandable && !expanded && (
         <button
           onClick={handleToggleExpand}
-          className="text-white z-10"
+          className="text-[#633796] bg-white rounded-full p-2 shadow-md"
         >
           <Search className="w-5 h-5" />
         </button>
