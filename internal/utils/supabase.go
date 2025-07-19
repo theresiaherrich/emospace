@@ -29,7 +29,7 @@ func UploadImageToSupabase(file multipart.File, fileHeader *multipart.FileHeader
 		return "", err
 	}
 
-	req, err := http.NewRequest("POST", uploadURL, bytes.NewReader(fileBytes))
+	req, err := http.NewRequest("PUT", uploadURL, bytes.NewReader(fileBytes)) 
 	if err != nil {
 		return "", err
 	}
@@ -51,3 +51,4 @@ func UploadImageToSupabase(file multipart.File, fileHeader *multipart.FileHeader
 	publicURL := fmt.Sprintf("%s/storage/v1/object/public/%s/%s", supabaseURL, bucket, objectName)
 	return publicURL, nil
 }
+
