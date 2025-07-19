@@ -16,15 +16,15 @@ func NewUserHandler(userService service.UserService) *UserHandler {
 }
 
 func (h *UserHandler) GetProfile(c *gin.Context) {
-	userID := c.GetUint("user_id") 
+	userID := c.GetUint("user_id")
 
 	user, err := h.userService.GetByID(userID)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		utils.RespondError(c, http.StatusNotFound, "user_id", "not_found", "User not found")
 		return
 	}
 
-	c.JSON(http.StatusOK, h.userService.ToProfileResponse(user))
+	utils.RespondSuccess(c, h.userService.ToProfileResponse(user))
 }
 
 func (h *UserHandler) UpdateProfile(c *gin.Context) {
@@ -32,7 +32,7 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 
 	user, err := h.userService.GetByID(userID)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		utils.RespondError(c, http.StatusNotFound, "user_id", "not_found", "User not found")
 		return
 	}
 
@@ -49,8 +49,8 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 		user.Phone = v
 	}
 	if v := c.PostForm("gender"); v != "" {
-		if v != "Female" && v != "Male" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Gender must be either 'Male' or 'Female'"})
+		if v != "Male" && v != "Female" {
+			utils.RespondError(c, http.StatusBadRequest, "gender", "invalid_value", "Gender must be either 'Male' or 'Female'")
 			return
 		}
 		user.Gender = v
@@ -63,16 +63,16 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 	if err == nil && file != nil {
 		imageURL, err := utils.UploadImageToSupabase(file, fileHeader, userID)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Image upload failed"})
+			utils.RespondError(c, http.StatusBadRequest, "profile_picture", "upload_failed", "Failed to upload image: "+err.Error())
 			return
 		}
 		user.ProfilePicture = imageURL
 	}
 
 	if err := h.userService.UpdateUser(user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		utils.RespondError(c, http.StatusBadRequest, "user", "update_failed", err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, h.userService.ToProfileResponse(user))
+	utils.RespondSuccess(c, h.userService.ToProfileResponse(user))
 }
