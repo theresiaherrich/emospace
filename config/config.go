@@ -40,7 +40,7 @@ func InitDB() error {
 		return fmt.Errorf("could not connect to database after %d attempts: %w", maxRetries, err)
 	}
 
-	err = db.AutoMigrate(&models.User{}, &models.Mood{}, &models.ChatLog{}, &models.PremiumPlan{})
+	err = db.AutoMigrate(&models.User{}, &models.Mood{}, &models.ChatLog{}, &models.PremiumPlan{}, &models.Transaction{})
 	if err != nil {
 		return fmt.Errorf("auto migration failed: %w", err)
 	}

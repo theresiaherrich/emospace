@@ -2,6 +2,7 @@ package service
 
 import (
 	"emospaces-backend/dto"
+	"emospaces-backend/internal/models"
 	"emospaces-backend/internal/repository"
 	"emospaces-backend/internal/utils"
 	"emospaces-backend/pkg/ai"
@@ -22,6 +23,7 @@ type MoodService interface {
 	SetMood(userID uint, moodCode string) error
 	GetMonthlyMood(userID uint, month time.Time) ([]dto.MoodCalendarResponse, error)
 	GenerateMoodSummary(userID uint, month time.Time) (string, error)
+	GetLatestMood(userID uint) (*models.Mood, error)
 }
 
 type moodService struct {
@@ -68,4 +70,12 @@ func (s *moodService) GenerateMoodSummary(userID uint, month time.Time) (string,
 	fmt.Println("Prompt ke Gemini:\n", prompt)
 
 	return ai.GeminiCall(prompt)
+}
+
+func (s *moodService) GetLatestMood(userID uint) (*models.Mood, error) {
+	mood, err := s.repo.GetLatestMood(userID)
+	if err != nil {
+		return nil, err
+	}
+	return mood, nil 
 }

@@ -78,3 +78,23 @@ func (h *MoodHandler) GetMoodSummary(c *gin.Context) {
 	})
 }
 
+func (h *MoodHandler) GetLatestMood(c *gin.Context) {
+	userID := c.GetUint("user_id")
+	mood, err := h.Service.GetLatestMood(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengambil data mood"})
+		return
+	}
+
+	if mood == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Kamu belum mengisi mood apapun. Yuk mulai hari ini dengan mengekspresikan perasaanmu 🌈",
+			"mood":    nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"mood": mood,
+	})
+}

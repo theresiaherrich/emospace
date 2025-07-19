@@ -42,7 +42,9 @@ func SetupRoutes() *gin.Engine {
 	planService := service.NewPlanService(planRepo)
 	planHandler := handler.NewPlanHandler(planService)
 
-	paymentService := service.NewPaymentService(userRepo, planRepo)
+	txRepo := repository.NewTransactionRepository(db)
+
+	paymentService := service.NewPaymentService(userRepo, planRepo, txRepo)
 	paymentHandler := handler.NewPaymentHandler(paymentService)
 
 	

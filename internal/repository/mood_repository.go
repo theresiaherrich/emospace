@@ -2,6 +2,7 @@ package repository
 
 import (
 	"emospaces-backend/internal/models"
+	"errors"
 	"time"
 
 	"gorm.io/gorm"
@@ -10,6 +11,7 @@ import (
 type MoodRepository interface {
 	SetMood(userID uint, date time.Time, moodCode string) error
 	GetMoodByMonth(userID uint, month time.Time) ([]models.Mood, error)
+	GetLatestMood(userID uint) (*models.Mood, error)
 }
 
 type moodRepository struct {
@@ -40,4 +42,13 @@ func (r *moodRepository) GetMoodByMonth(userID uint, month time.Time) ([]models.
 
 	err := r.db.Where("user_id = ? AND date >= ? AND date < ?", userID, start, end).Find(&moods).Error
 	return moods, err
+}
+
+func (r *moodRepository) GetLatestMood(userID uint) (*models.Mood, error) {
+	var mood models.Mood
+	err := r.db.Where("user_id = ?", userID).Order("date desc").First(&mood).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil 
+	}
+	return &mood, err
 }
