@@ -9,6 +9,7 @@ interface CustomDropdownProps {
   onChange: (value: string) => void;
   placeholder?: string;
   required?: boolean;
+  className?: string;
 }
 
 const CustomDropdown: React.FC<CustomDropdownProps> = ({
@@ -18,6 +19,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
   onChange,
   placeholder = "Select...",
   required = false,
+  className = "",
 }) => {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -37,7 +39,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
       {label && <Label required={required}>{label}</Label>}
       <button
         type="button"
-        className="flex mt-1 px-5 py-2 rounded-2xl border-2 border-[#351A57] border-opacity-40 font-bold text-black placeholder:text-black placeholder:text-opacity-40 bg-[#CECECE] backdrop-blur-sm bg-opacity-40 w-full items-center justify-between"
+        className={`flex mt-1 px-5 py-2 rounded-2xl border-2 border-[#351A57] border-opacity-40 font-bold text-black placeholder:text-black placeholder:text-opacity-40 bg-[#CECECE] backdrop-blur-sm bg-opacity-40 w-full items-center justify-between ${className}`}
         onClick={() => setOpen(!open)}
       >
         <span className={`${!value ? "text-black text-opacity-40" : ""}`}>

@@ -8,7 +8,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {}
 const Input: React.FC<InputProps> = ({ className, ...props }) => {
   return (
     <div className="flex flex-col font-lexend gap-1">
-      <Label required={props.required}>
+      <Label required={props.required} >
         {props.title}
       </Label>
       <input

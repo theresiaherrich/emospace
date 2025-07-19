@@ -12,6 +12,7 @@ interface CalendarPickerProps {
   onChange: (date: Date) => void;
   required?: boolean;
   variant?: 'day' | 'month' | 'year';
+  className?: string;
 }
 
 const CalendarPicker: React.FC<CalendarPickerProps> = ({
@@ -20,6 +21,7 @@ const CalendarPicker: React.FC<CalendarPickerProps> = ({
   onChange,
   required,
   variant = 'day',
+  className = '',
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -50,6 +52,7 @@ const CalendarPicker: React.FC<CalendarPickerProps> = ({
         readOnly
         onClick={() => setOpen(!open)}
         value={getFormattedValue()}
+        className={className}
         placeholder={
           variant === 'month'
             ? 'Select month'
@@ -67,7 +70,7 @@ const CalendarPicker: React.FC<CalendarPickerProps> = ({
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-2 w-fit bg-white border rounded-md shadow-md p-3">
+        <div className="absolute bottom-full z-50 mt-2 w-fit bg-white border rounded-md shadow-md p-3">
           <DayPicker
             mode="single"
             selected={value}

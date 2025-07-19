@@ -10,7 +10,7 @@ const Label: React.FC<LabelProps> = ({ className, required, ...props }) => {
   return (
     <label
       className={clsx(
-        "text-[#474747] font-bold text-base",
+        "font-bold text-base",
         required && "after:content-['*'] after:text-red-500 after:ml-1",
         className
       )}

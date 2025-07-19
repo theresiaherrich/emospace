@@ -13,6 +13,9 @@ import DetailJournalPage from '../pages/detailjournal';
 import ScrollToTop from '../components/scrolltotop';
 import PremiumPage from '../pages/premium';
 import PaymentPage from '../pages/payment';
+import { ProfileLayout } from '../layouts/profileLayout';
+import UserProfilePage from '../pages/userprofile';
+import EditProfilePage from '../pages/editprofile';
 
 const AppRoutes = () => {
   return (
@@ -34,6 +37,10 @@ const AppRoutes = () => {
         </Route>
         <Route element={<ChatbotLayout />}>
           <Route path="/space-chat" element={<SpaceChatbotPage />} />
+        </Route>
+        <Route element={<ProfileLayout />}>
+          <Route path="/user-profile" element={<UserProfilePage />} />
+          <Route path="/user-profile/edit" element={<EditProfilePage />} />
         </Route>
       </Routes>
     </>

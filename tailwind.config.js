@@ -14,6 +14,7 @@ export default {
         'aispace': "url('/assets/AISpace-bg.svg')",
         'chatbot': "url('/assets/chatbot-bg.svg')",
         'specialist': "url('/assets/specialist-bg.svg')",
+        'profile': "url('/assets/profile-bg.svg')",
       },
       colors: {
         'primary': '#593187',

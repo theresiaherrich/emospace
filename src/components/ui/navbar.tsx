@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
-import { User, Menu, X } from 'lucide-react';
+import { UserRound, Menu, X } from 'lucide-react';
 import Logo from '/assets/logo.svg';
 import Button from './button';
 import { useState, useEffect } from 'react';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogin = () => {
@@ -66,7 +66,7 @@ const Navbar = () => {
 
             {isLogin ? (
               <Link to="/user-profile" className="text-gray-900 hover:text-gray-700">
-                <User />
+                <UserRound className='w-5 h-5' />
               </Link>
             ) : (
               <Link to="/login">
@@ -97,7 +97,7 @@ const Navbar = () => {
             </Link>
             {isLogin ? (
               <Link to="/user-profile" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-900">
-                <User />
+                <UserRound className='w-5 h-5' />
               </Link>
             ) : (
               <Link to="/login">
