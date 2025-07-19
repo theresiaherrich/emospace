@@ -23,7 +23,7 @@ const UserProfileCard = ({ name, email, phone, isPremium }: UserProfileCardProps
 
   const [notificationsOn, setNotificationsOn] = useState(false);
   const [language, setLanguage] = useState<"English" | "Bahasa">("English");
-  const [premium, setPremium] = useState(isPremium);
+  const [premium] = useState(isPremium);
 
   const handleToggleNotifications = () => {
     setNotificationsOn((prev) => !prev);
