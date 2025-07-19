@@ -2,13 +2,21 @@ import * as React from "react";
 import LoginForm from "../components/loginForm";
 import { useNavigate } from "react-router-dom";
 import Logo from "/assets/logo.svg";
+import { useLogin } from "../../../hooks/uselogin";
 
 export const LoginContainer: React.FC = () => {
   const navigate = useNavigate();
+  const { handleLogin, error } = useLogin();
 
-  const onSubmit = (data: { email: string; password: string }) => {
-    console.log(data);
-    navigate("/register");
+  const onSubmit = async (data: { identifier: string; password: string }) => {
+    const message = await handleLogin(data.identifier, data.password);
+    if (message) {
+      alert(message);
+      navigate("/");
+    }
+    else {
+      alert(error || "Login failed. Please try again.");
+    }
   };
 
   return (
