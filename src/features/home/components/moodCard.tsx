@@ -1,20 +1,19 @@
-// components/MoodCard.tsx
 import { useState } from 'react';
 import Card from '../../../components/ui/card';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { type MoodType } from '../types/type';
 
-const moods: { label: MoodType; emoji: string }[] = [
-  { label: 'Sad', emoji: '/assets/sad.svg' },
-  { label: 'Spectacular', emoji: '/assets/spectacular.svg' },
-  { label: 'Angry', emoji: '/assets/angry.svg' },
-  { label: 'Calm', emoji: '/assets/calm.svg' },
-  { label: 'Happy', emoji: '/assets/happy.svg' },
-  { label: 'Upset', emoji: '/assets/upset.svg' },
+const moods: { mood_code: MoodType; emoji: string }[] = [
+  { mood_code: 'Sad', emoji: '/assets/sad.svg' },
+  { mood_code: 'Spectacular', emoji: '/assets/spectacular.svg' },
+  { mood_code: 'Angry', emoji: '/assets/angry.svg' },
+  { mood_code: 'Calm', emoji: '/assets/calm.svg' },
+  { mood_code: 'Happy', emoji: '/assets/happy.svg' },
+  { mood_code: 'Upset', emoji: '/assets/upset.svg' },
 ];
 
 interface MoodCardProps {
-  onSelectMood: (mood: MoodType) => void;
+  onSelectMood: (moods: MoodType) => void;
 }
 
 const MoodCard: React.FC<MoodCardProps> = ({ onSelectMood }) => {
@@ -27,7 +26,7 @@ const MoodCard: React.FC<MoodCardProps> = ({ onSelectMood }) => {
   const handleNext = () => setIndex(nextIndex);
 
   const handleSelect = () => {
-    const selectedMood = moods[index].label;
+    const selectedMood = moods[index].mood_code;
     onSelectMood(selectedMood);
   };
 
@@ -42,9 +41,9 @@ const MoodCard: React.FC<MoodCardProps> = ({ onSelectMood }) => {
         <div className="flex items-center gap-1">
           <div className="flex flex-col items-center scale-80">
             <div className="w-20 h-20">
-              <img src={moods[prevIndex].emoji} alt={moods[prevIndex].label} className="w-20 h-20" />
+              <img src={moods[prevIndex].emoji} alt={moods[prevIndex].mood_code} className="w-20 h-20" />
             </div>
-            <div className="text-base mt-1">{moods[prevIndex].label}</div>
+            <div className="text-base mt-1">{moods[prevIndex].mood_code}</div>
           </div>
 
           <div
@@ -52,16 +51,16 @@ const MoodCard: React.FC<MoodCardProps> = ({ onSelectMood }) => {
             className="flex flex-col items-center scale-110 cursor-pointer"
           >
             <div className="w-28 h-28">
-              <img src={moods[index].emoji} alt={moods[index].label} className="w-28 h-28" />
+              <img src={moods[index].emoji} alt={moods[index].mood_code} className="w-28 h-28" />
             </div>
-            <div className="text-xl mt-1">{moods[index].label}</div>
+            <div className="text-xl mt-1">{moods[index].mood_code}</div>
           </div>
 
           <div className="flex flex-col items-center scale-80">
             <div className="w-20 h-20">
-              <img src={moods[nextIndex].emoji} alt={moods[nextIndex].label} className="w-20 h-20" />
+              <img src={moods[nextIndex].emoji} alt={moods[nextIndex].mood_code} className="w-20 h-20" />
             </div>
-            <div className="text-base mt-1">{moods[nextIndex].label}</div>
+            <div className="text-base mt-1">{moods[nextIndex].mood_code}</div>
           </div>
         </div>
 

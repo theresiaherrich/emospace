@@ -8,21 +8,33 @@ import { type MoodType, type MoodMap } from "../types/type";
 import { format } from "date-fns";
 import Card from "../../../components/ui/card";
 import Button from "../../../components/ui/button";
+import SummaryCard from "../components/summaryCard";
+import { postMood } from "../../../services/moodservice";
 
 const HomeContainer: React.FC = () => {
   const [moodData, setMoodData] = useState<MoodMap>({});
+  const [refreshKey, setRefreshKey] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     const stored = localStorage.getItem("moodData");
-    if (stored) setMoodData(JSON.parse(stored));
+    if (stored) {
+      setMoodData(JSON.parse(stored));
+    }
   }, []);
 
-  const handleMoodSelect = (mood: MoodType) => {
+  const handleMoodSelect = async (mood_code: MoodType) => {
     const today = format(new Date(), "yyyy-MM-dd");
-    const updated = { ...moodData, [today]: mood };
-    setMoodData(updated);
-    localStorage.setItem("moodData", JSON.stringify(updated));
+    const updated = { ...moodData, [today]: mood_code };
+
+    try {
+      await postMood(mood_code);
+      setMoodData(updated);
+      localStorage.setItem("moodData", JSON.stringify(updated));
+      setRefreshKey((prev) => prev + 1);
+    } catch (err) {
+      console.error("Failed to post mood:", err);
+    }
   };
 
   return (
@@ -50,20 +62,8 @@ const HomeContainer: React.FC = () => {
               Here Is Your Mood Tracker
             </h1>
             <div className="flex flex-col xl:flex-row gap-6 items-center justify-center w-full">
-              <CalendarMood moodData={moodData} />
-              <Card className="flex flex-col gap-2 w-full max-w-[452px] h-[491px] p-4 mt-[40px] xl:mt-[70px] rounded-2xl shadow-none bg-[#FDFEFF]">
-                <div className="flex items-center gap-2 justify-between w-full">
-                  <div className="flex items-center gap-2">
-                    <img className="h-6 w-6" src="/assets/crown 1.svg" alt="" />
-                    <h1 className="text-xl font-bold text-left">Summary</h1>
-                  </div>
-                  <a href="#" className="text-xs font-medium text-[#9F53FF]">View all</a>
-                </div>
-                <div className="flex flex-col items-center justify-center h-full">
-                  <p className="font-medium text-[#1C1C1C] text-opacity-60 text-center">Unlock Premium to Access This Feature</p>
-                  <a href="/premium" className="text-[#593187] font-medium text-opacity-60 text-center">Click Here to Upgrade With Rp 29.000 Only!</a>
-                </div>
-              </Card>
+              <CalendarMood key={refreshKey} moodData={moodData} />
+              <SummaryCard />
             </div>
           </div>
 

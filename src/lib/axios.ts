@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "/api", //local development
+  //baseURL: import.meta.env.VITE_API_URL || "https://emospace.bccdev.id/api",
+  baseURL: "/api",
   withCredentials: true,
 });
 
