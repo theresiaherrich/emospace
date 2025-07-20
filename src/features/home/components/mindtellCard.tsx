@@ -13,7 +13,7 @@ const MindToTellCard: React.FC = () => {
                 <span>Talk To Space</span>
             </button>
             <button onClick={() => navigate("/specialist")} className="flex flex-col items-center">
-                <img src="/assets/specialist-icon.svg" alt="Seek Expert" className="h-32" />
+                <img src="/assets/specialist-icon.png" alt="Seek Expert" className="h-32" />
                 <span>Seek Expert</span>
             </button>
         </div>
