@@ -13,16 +13,17 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-func GenerateToken(userID uint, rememberMe bool) (string, error) {
+func GenerateToken(userID uint, rememberMe bool, role string) (string, error) {
 	var expiry time.Duration
 	if rememberMe {
-		expiry = time.Hour * 24 * 7 // 7 hari
+		expiry = time.Hour * 24 * 7
 	} else {
-		expiry = time.Hour * 24 // 1 hari
+		expiry = time.Hour * 24
 	}
 
 	claims := jwt.MapClaims{
 		"user_id": userID,
+		"role":    role,
 		"exp":     time.Now().Add(expiry).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -36,6 +37,26 @@ func GenerateResetToken(email string) (string, error) {
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+}
+
+func RequireRole(allowedRoles ...string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		roleInterface, exists := c.Get("role")
+		if !exists {
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Role not found"})
+			return
+		}
+
+		role := roleInterface.(string)
+		for _, allowed := range allowedRoles {
+			if role == allowed {
+				c.Next()
+				return
+			}
+		}
+
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Forbidden - Insufficient permissions"})
+	}
 }
 
 func JWTMiddleware() gin.HandlerFunc {
@@ -90,7 +111,13 @@ func JWTMiddleware() gin.HandlerFunc {
 			c.Set("mood", mood.MoodCode)
 		}
 
-		// Set data user ke context
+		role, ok := claims["role"].(string)
+		if !ok {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized - Role not found in token"})
+			return
+		}
+		
+		c.Set("role", role)
 		c.Set("user_id", user.ID)
 		c.Set("user_name", user.Username)
 

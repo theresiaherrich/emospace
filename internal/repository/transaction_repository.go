@@ -6,24 +6,32 @@ import (
 )
 
 type TransactionRepository interface {
-	Save(tx *models.Transaction) error
-	GetUserTransactions(userID uint) ([]models.Transaction, error)
+    Create(tx *models.Transaction) error
+    FindByUserID(userID uint) ([]models.Transaction, error)
+    FindAll() ([]models.Transaction, error)
 }
 
-type transactionRepo struct {
-	db *gorm.DB
+type transactionRepository struct {
+    db *gorm.DB
 }
 
 func NewTransactionRepository(db *gorm.DB) TransactionRepository {
-	return &transactionRepo{db}
+    return &transactionRepository{db}
 }
 
-func (r *transactionRepo) Save(tx *models.Transaction) error {
-	return r.db.Create(tx).Error
+func (r *transactionRepository) Create(tx *models.Transaction) error {
+    return r.db.Create(tx).Error
 }
 
-func (r *transactionRepo) GetUserTransactions(userID uint) ([]models.Transaction, error) {
-	var txs []models.Transaction
-	err := r.db.Where("user_id = ?", userID).Order("created_at desc").Find(&txs).Error
-	return txs, err
+func (r *transactionRepository) FindByUserID(userID uint) ([]models.Transaction, error) {
+    var txs []models.Transaction
+    err := r.db.Where("user_id = ?", userID).Find(&txs).Error
+    return txs, err
 }
+
+func (r *transactionRepository) FindAll() ([]models.Transaction, error) {
+    var txs []models.Transaction
+    err := r.db.Find(&txs).Error
+    return txs, err
+}
+

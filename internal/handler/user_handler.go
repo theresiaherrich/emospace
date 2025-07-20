@@ -76,3 +76,13 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 
 	utils.RespondSuccess(c, h.userService.ToProfileResponse(user))
 }
+
+func (h *UserHandler) GetAllUsers(c *gin.Context) {
+	users, err := h.userService.GetAllUsers()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"users": users})
+}

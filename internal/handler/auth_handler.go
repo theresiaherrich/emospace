@@ -48,6 +48,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		Password:  input.Password,
 		Gender:    input.Gender,
 		BirthDate: input.BirthDate,
+		Role:      "user",
 	}
 
 	if err := h.service.Register(&user); err != nil {
@@ -71,7 +72,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	token, err := middleware.GenerateToken(user.ID, input.RememberMe)
+	token, err := middleware.GenerateToken(user.ID, input.RememberMe, user.Role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return

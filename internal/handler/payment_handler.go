@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"emospaces-backend/dto"
 	"emospaces-backend/internal/service"
 	"log"
 	"net/http"
@@ -59,25 +58,30 @@ func (h *PaymentHandler) PaymentCallback(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Pembayaran berhasil diproses"})
 }
 
-func (h *PaymentHandler) GetTransactions(c *gin.Context) {
-	userID := c.GetUint("user_id")
-	txs, err := h.Service.GetTransactionHistory(userID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengambil riwayat transaksi"})
-		return
-	}
+func (h *PaymentHandler) GetMyTransactions(c *gin.Context) {
+    userID := c.GetUint("user_id") // dari JWT middleware
 
-	var response []dto.TransactionResponse
-	for _, tx := range txs {
-		response = append(response, dto.TransactionResponse{
-			OrderID:   tx.OrderID,
-			PlanID:    tx.PlanID,
-			Amount:    tx.Amount,
-			Status:    tx.Status,
-			ExpiredAt: tx.ExpiredAt,
-			CreatedAt: tx.CreatedAt,
-		})
-	}
+    txs, err := h.Service.GetUserTransactions(userID)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengambil transaksi"})
+        return
+    }
 
-	c.JSON(http.StatusOK, gin.H{"transactions": response})
+    c.JSON(http.StatusOK, gin.H{"transactions": txs})
+}
+
+func (h *PaymentHandler) GetAllTransactions(c *gin.Context) {
+    role := c.GetString("role") // pastikan JWT punya claim `role`
+    if role != "admin" {
+        c.JSON(http.StatusForbidden, gin.H{"error": "Hanya admin yang bisa melihat semua transaksi"})
+        return
+    }
+
+    txs, err := h.Service.GetAllTransactions()
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengambil semua transaksi"})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"transactions": txs})
 }

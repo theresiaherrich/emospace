@@ -6,9 +6,12 @@ import (
 
 	"emospaces-backend/config"
 	"emospaces-backend/internal/routes"
+	"emospaces-backend/seeder"
 )
 
 func main() {
+	config.LoadEnv()
+
 	requiredEnvs := []string{"DB_HOST", "DB_PORT", "DB_USER", "DB_PASS", "DB_NAME"}
 	for _, env := range requiredEnvs {
 		if os.Getenv(env) == "" {
@@ -20,6 +23,8 @@ func main() {
 		log.Fatalf("Database initialization failed: %v", err)
 	}
 
+	seeder.SeedAdminUser()
+	
 	r := routes.SetupRoutes()
 
 	log.Println("Server is running on port 8080...")

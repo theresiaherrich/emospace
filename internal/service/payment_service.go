@@ -14,7 +14,8 @@ import (
 type PaymentService interface {
 	GenerateSnapTokenFromPlan(userID uint, planID uint) (string, string, error)
 	HandleMidtransCallback(payload map[string]interface{}) error
-	GetTransactionHistory(userID uint) ([]models.Transaction, error)
+	GetUserTransactions(userID uint) ([]models.Transaction, error)
+    GetAllTransactions() ([]models.Transaction, error)
 }
 
 type paymentService struct {
@@ -108,6 +109,11 @@ func (s *paymentService) HandleMidtransCallback(payload map[string]interface{}) 
 	return nil
 }
 
-func (s *paymentService) GetTransactionHistory(userID uint) ([]models.Transaction, error) {
-	return s.txRepo.GetUserTransactions(userID)
+func (s *paymentService) GetUserTransactions(userID uint) ([]models.Transaction, error) {
+    return s.txRepo.FindByUserID(userID)
 }
+
+func (s *paymentService) GetAllTransactions() ([]models.Transaction, error) {
+    return s.txRepo.FindAll()
+}
+

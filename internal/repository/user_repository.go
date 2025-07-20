@@ -16,6 +16,7 @@ type UserRepository interface {
 	SetPremiumWithDuration(id uint, until time.Time) error
 	GetByID(id uint) (*models.User, error)
 	Update(user *models.User) error
+	FindAll() ([]*models.User, error)
 }
 
 type userRepo struct {
@@ -71,4 +72,10 @@ func (r *userRepo) GetByID(userID uint) (*models.User, error) {
 
 func (r *userRepo) Update(user *models.User) error {
 	return r.db.Save(user).Error
+}
+
+func (r *userRepo) FindAll() ([]*models.User, error) {
+	var users []*models.User
+	err := r.db.Order("created_at desc").Find(&users).Error
+	return users, err
 }

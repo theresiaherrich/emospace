@@ -16,6 +16,7 @@ type UserService interface {
 	GetByID(userID uint) (*models.User, error)
 	UpdateUser(user *models.User) error
 	ToProfileResponse(user *models.User) *dto.UserProfileResponse
+	GetAllUsers() ([]*models.User, error)
 }
 
 type userService struct {
@@ -91,4 +92,8 @@ func (s *userService) ToProfileResponse(user *models.User) *dto.UserProfileRespo
 		IsPremium:      user.IsPremium,
 		PremiumUntil:   user.PremiumUntil,
 	}
+}
+
+func (s *userService) GetAllUsers() ([]*models.User, error) {
+	return s.repo.FindAll()
 }

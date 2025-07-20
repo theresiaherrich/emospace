@@ -55,6 +55,7 @@ func SetupRoutes() *gin.Engine {
 	RegisterPaymentRoutes(api, paymentHandler)
 	RegisterPlanRoutes(api, planHandler)
 	RegisterUserRoutes(api, userHandler)
+	RegisterAdminRoutes(api, userHandler)
 
 	r.GET("/", func(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"message": "EmoSpace backend is running 🚀"})

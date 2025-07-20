@@ -12,7 +12,13 @@ func RegisterPaymentRoutes(rg *gin.RouterGroup, paymentHandler *handler.PaymentH
 	payment.Use(middleware.JWTMiddleware())
 	{
 		payment.GET("/snap/:planID", paymentHandler.GetSnapTokenFromPlan)
-		payment.GET("/transactions", paymentHandler.GetTransactions)
+		payment.GET("/transactions", paymentHandler.GetMyTransactions)
+
+		admin := payment.Group("")
+		admin.Use(middleware.RequireRole("admin"))
+		{
+			admin.GET("/Alltransactions", paymentHandler.GetAllTransactions)
+		}
 	}
 
 	rg.POST("/payment/callback", paymentHandler.PaymentCallback)
