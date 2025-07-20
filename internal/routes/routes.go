@@ -5,24 +5,26 @@ import (
 	"emospaces-backend/internal/handler"
 	"emospaces-backend/internal/repository"
 	"emospaces-backend/internal/service"
+	"emospaces-backend/middleware"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func SetupRoutes() *gin.Engine {
-	gin.SetMode(gin.ReleaseMode) 
+	gin.SetMode(gin.ReleaseMode)
 
-    r := gin.Default()
-    r.SetTrustedProxies(nil)
-    r.ForwardedByClientIP = true
+	r := gin.Default()
+	r.Use(middleware.CORSMiddleware())
+	r.SetTrustedProxies(nil)
+	r.ForwardedByClientIP = true
 
-    r.Use(func(c *gin.Context) {
-        if c.Request.Header.Get("X-Forwarded-Proto") == "https" {
-            c.Request.URL.Scheme = "https"
-        }
-        c.Next()
-    })
+	r.Use(func(c *gin.Context) {
+		if c.Request.Header.Get("X-Forwarded-Proto") == "https" {
+			c.Request.URL.Scheme = "https"
+		}
+		c.Next()
+	})
 
 	db := config.DB
 
@@ -34,7 +36,7 @@ func SetupRoutes() *gin.Engine {
 	moodRepo := repository.NewMoodRepository(db)
 	moodService := service.NewMoodService(moodRepo)
 	moodHandler := handler.NewMoodHandler(moodService)
-	
+
 	chatRepo := repository.NewChatRepository(db)
 	aiHandler := handler.NewAIHandler(chatRepo, userRepo)
 
@@ -47,7 +49,6 @@ func SetupRoutes() *gin.Engine {
 	paymentService := service.NewPaymentService(userRepo, planRepo, txRepo)
 	paymentHandler := handler.NewPaymentHandler(paymentService)
 
-	
 	api := r.Group("/api")
 	RegisterAuthRoutes(api, authHandler)
 	RegisterMoodRoutes(api, moodHandler)
@@ -58,10 +59,8 @@ func SetupRoutes() *gin.Engine {
 	RegisterAdminRoutes(api, userHandler)
 
 	r.GET("/", func(c *gin.Context) {
-    c.JSON(http.StatusOK, gin.H{"message": "EmoSpace backend is running 🚀"})
+		c.JSON(http.StatusOK, gin.H{"message": "EmoSpace backend is running 🚀"})
 	})
-
 
 	return r
 }
-
