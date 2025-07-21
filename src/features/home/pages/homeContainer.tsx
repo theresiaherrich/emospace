@@ -37,6 +37,18 @@ const HomeContainer: React.FC = () => {
     }
   };
 
+  const greeting = () => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) {
+      return "Good Morning";
+    } else if ( hour >= 12 && hour < 17) {
+      return "Good Afternoon";
+    } else if (hour >= 17 && hour < 21) {
+      return "Good Evening";
+    }
+    return "Good Night";
+  }
+
   return (
     <div className="bg-home bg-[center_top] bg-cover bg-no-repeat min-h-screen w-full">
       <div className="flex justify-center pt-[120px] px-4 md:px-10 lg:px-20 pb-20">
@@ -48,9 +60,9 @@ const HomeContainer: React.FC = () => {
               className="absolute top-[90px] left-[10%] sm:left-[10%] md:left-[25%] lg:left-[440px]"
             />
             <h1 className="text-[26px] sm:text-[28px] md:text-[32px] leading-tight font-bold text-black mb-4 text-center">
-              Good Morning User, <br /> How Are You Feeling Today?
+              {greeting()} User, <br /> How Are You Feeling Today?
             </h1>
-            <div className="flex flex-col lg:flex-row gap-9 justify-center items-center w-full">
+            <div className="flex flex-col xl:flex-row gap-9 justify-center items-center w-full">
               <DateCard imageSrc="/assets/rectangle.png" />
               <MoodCard onSelectMood={handleMoodSelect} />
               <MindToTellCard />

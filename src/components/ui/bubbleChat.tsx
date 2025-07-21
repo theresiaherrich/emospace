@@ -1,6 +1,6 @@
 interface ChatBubbleProps {
   from: 'user' | 'bot' | string;
-  text: string;
+  text: string | React.ReactNode;
 }
 
 const ChatBubble: React.FC<ChatBubbleProps> = ({ from, text }) => {
