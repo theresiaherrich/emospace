@@ -9,5 +9,6 @@ type ChatLog struct {
 	Mood      string
 	UserInput string
 	AIOutput  string
+	Stage     int       `gorm:"default:1"`
 	CreatedAt time.Time
 }

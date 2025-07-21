@@ -14,10 +14,15 @@ import (
 type AIHandler struct {
 	ChatRepo repository.ChatRepository
 	UserRepo repository.UserRepository
+	Service  service.ChatService
 }
 
-func NewAIHandler(chatRepo repository.ChatRepository, userRepo repository.UserRepository) *AIHandler {
-	return &AIHandler{ChatRepo: chatRepo, UserRepo: userRepo}
+func NewAIHandler(chatRepo repository.ChatRepository, userRepo repository.UserRepository, service service.ChatService) *AIHandler {
+	return &AIHandler{
+		ChatRepo: chatRepo,
+		UserRepo: userRepo,
+		Service:  service,
+	}
 }
 
 func (h *AIHandler) Welcome(c *gin.Context) {
@@ -60,7 +65,7 @@ func (h *AIHandler) HandleChat(c *gin.Context) {
 		return
 	}
 
-	allowed, err := service.CanUserChat(user, h.ChatRepo)
+	allowed, err := h.Service.CanUserChat(user)
 	if err != nil {
 		log.Printf("[CHAT] Error cek limit user: %v\n", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengecek batas harian"})
@@ -71,7 +76,7 @@ func (h *AIHandler) HandleChat(c *gin.Context) {
 		return
 	}
 
-	response, err := service.GenerateAIResponse(user, mood, input.Message, h.ChatRepo)
+	response, err := h.Service.GenerateAIResponse(user, mood, input.Message)
 	if err != nil {
 		log.Printf("[CHAT] Gagal generate respon AI: %v\n", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "AI gagal membalas. Mohon coba lagi."})
@@ -96,7 +101,7 @@ func (h *AIHandler) SearchUserInputOnly(c *gin.Context) {
 		return
 	}
 
-	inputs, err := service.SearchUserInputOnly(userName, keyword, h.ChatRepo)
+	inputs, err := h.Service.SearchUserInputOnly(userName, keyword)
 	if err != nil {
 		log.Printf("[SEARCH] Gagal cari keyword: %v\n", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mencari curhatan"})
@@ -109,4 +114,58 @@ func (h *AIHandler) SearchUserInputOnly(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"results": inputs})
+}
+
+func (h *AIHandler) GetChatHistory(c *gin.Context) {
+	userName := c.GetString("user_name")
+
+	if userName == "" {
+		log.Println("[HISTORY] Missing user_name in context")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	history, err := h.ChatRepo.GetChatHistoryByUser(userName)
+	if err != nil {
+		log.Printf("[HISTORY] Failed to get chat history: %v\n", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengambil riwayat curhat"})
+		return
+	}
+
+	var simplified []gin.H
+	for _, h := range history {
+		simplified = append(simplified, gin.H{
+			"user_input": h.UserInput,
+			"ai_output":  h.AIOutput,
+			"created_at": h.CreatedAt,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"history": simplified})
+}
+
+func (h *AIHandler) ChatStepByStep(c *gin.Context) {
+	userID := c.GetUint("user_id")
+	user, err := h.UserRepo.FindByID(userID)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	var input struct {
+		Mood    string `json:"mood"`
+		Message string `json:"message"`
+	}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	responses, err := h.Service.GenerateStepByStepResponse(user, input.Mood, input.Message)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate response"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"responses": responses})
 }

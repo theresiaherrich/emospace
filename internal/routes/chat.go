@@ -14,5 +14,7 @@ func RegisterAIRoutes(rg *gin.RouterGroup, aiHandler *handler.AIHandler) {
 		chat.POST("/chat", aiHandler.HandleChat)
 		chat.GET("/welcome", aiHandler.Welcome)
 		chat.GET("/search", aiHandler.SearchUserInputOnly)
+		chat.GET("/history", aiHandler.GetChatHistory)
+		chat.POST("/chat-step", aiHandler.ChatStepByStep)
 	}
 }

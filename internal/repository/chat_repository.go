@@ -11,7 +11,11 @@ type ChatRepository interface {
 	SaveChat(chat models.ChatLog) error
 	GetChatsByUser(userName string) ([]models.ChatLog, error)
 	SearchUserInputsOnly(userName, keyword string) ([]string, error)
+	GetChatHistoryByUser(userName string) ([]models.ChatLog, error)
 	CountChatsToday(userID uint, date time.Time) (int64, error)
+	GetStageByUser(userID uint) (*models.ChatStage, error)
+	SaveOrUpdateStage(stage *models.ChatStage) error
+	ResetStage(userID uint) error
 }
 
 type chatRepository struct {
@@ -54,4 +58,38 @@ func (r *chatRepository) CountChatsToday(userID uint, date time.Time) (int64, er
 		Count(&count).Error
 
 	return count, err
+}
+
+func (r *chatRepository) GetChatHistoryByUser(userName string) ([]models.ChatLog, error) {
+	var logs []models.ChatLog
+	err := r.db.
+		Where("user_name = ?", userName).
+		Order("created_at desc").
+		Find(&logs).Error
+	return logs, err
+}
+
+func (r *chatRepository) GetStageByUser(userID uint) (*models.ChatStage, error) {
+	var stage models.ChatStage
+	err := r.db.Where("user_id = ?", userID).First(&stage).Error
+	if err != nil {
+		return nil, err
+	}
+	return &stage, nil
+}
+
+func (r *chatRepository) SaveOrUpdateStage(stage *models.ChatStage) error {
+	var existing models.ChatStage
+	err := r.db.Where("user_id = ?", stage.UserID).First(&existing).Error
+	if err != nil {
+		return r.db.Create(stage).Error
+	}
+	existing.Stage = stage.Stage
+	existing.Mood = stage.Mood
+	existing.LastInput = stage.LastInput
+	return r.db.Save(&existing).Error
+}
+
+func (r *chatRepository) ResetStage(userID uint) error {
+	return r.db.Where("user_id = ?", userID).Delete(&models.ChatStage{}).Error
 }
