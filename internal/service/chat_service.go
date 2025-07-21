@@ -24,7 +24,7 @@ func NewChatService(repo repository.ChatRepository) ChatService {
 }
 
 func (s *chatService) GenerateAIResponse(user *models.User, mood string, userMessage string) (string, error) {
-	history, _ := s.repo.GetChatsByUser(user.Username)
+	history, _ := s.repo.GetRecentChatsByUser(user.Username, 5)
 
 	var contextBuilder strings.Builder
 	contextBuilder.WriteString("Kamu adalah Space, chatbot AI yang empatik dan suportif untuk remaja. Gaya bahasa kamu santai, anak muda, dan tidak formal. Jangan beri jawaban panjang atau berulang. Fokus: validasi emosi, beri semangat, dan ajak ngobrol ringan.\n")
@@ -36,12 +36,12 @@ func (s *chatService) GenerateAIResponse(user *models.User, mood string, userMes
 	}
 
 	contextBuilder.WriteString("Sekarang user berkata: \"" + userMessage + "\"\n")
-	contextBuilder.WriteString("Balas dengan:\n")
-	contextBuilder.WriteString("- 1 kalimat validasi emosinya\n")
+	contextBuilder.WriteString("Tugas kamu adalah menjawab dengan:\n")
+	contextBuilder.WriteString("- 1 kalimat validasi perasaan dari pernyataan terakhir user\n")
 	contextBuilder.WriteString("- 1 kalimat empati atau semangat\n")
-	contextBuilder.WriteString("- 1 ajakan ngobrol ringan (bukan solusi instan)\n")
-	contextBuilder.WriteString("Hindari jawaban panjang, hindari pengulangan. Tutup dengan 1 kalimat ajakan ke halaman Konsultasi jika perlu.\n")
-	contextBuilder.WriteString("Ingat: jangan beri jawaban final, cukup lanjutkan obrolan seolah kamu teman curhat.")
+	contextBuilder.WriteString("- 1 kalimat pertanyaan ringan yang nyambung dengan isi kalimat user terakhir\n")
+	contextBuilder.WriteString("Jawaban harus singkat, ramah, dan tidak memberi solusi final.\n")
+	contextBuilder.WriteString("Akhiri dengan ajakan ringan untuk ke halaman Konsultasi jika ingin cerita lebih dalam.\n")
 
 	prompt := contextBuilder.String()
 

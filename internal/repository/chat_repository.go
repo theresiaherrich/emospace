@@ -10,6 +10,7 @@ import (
 type ChatRepository interface {
 	SaveChat(chat models.ChatLog) error
 	GetChatsByUser(userName string) ([]models.ChatLog, error)
+	GetRecentChatsByUser(username string, limit int) ([]models.ChatLog, error)
 	SearchUserInputsOnly(userName, keyword string) ([]string, error)
 	GetChatHistoryByUser(userName string) ([]models.ChatLog, error)
 	CountChatsToday(userID uint, date time.Time) (int64, error)
@@ -38,6 +39,25 @@ func (r *chatRepository) GetChatsByUser(userName string) ([]models.ChatLog, erro
 		Find(&chats).Error
 	return chats, err
 }
+
+func (r *chatRepository) GetRecentChatsByUser(username string, limit int) ([]models.ChatLog, error) {
+	var chats []models.ChatLog
+	err := r.db.
+		Where("user_name = ?", username).
+		Order("created_at desc").
+		Limit(limit).
+		Find(&chats).Error
+	if err != nil {
+		return nil, err
+	}
+
+	for i, j := 0, len(chats)-1; i < j; i, j = i+1, j-1 {
+		chats[i], chats[j] = chats[j], chats[i]
+	}
+
+	return chats, nil
+}
+
 
 func (r *chatRepository) SearchUserInputsOnly(userName, keyword string) ([]string, error) {
 	var inputs []string
