@@ -50,6 +50,10 @@ func SetupRoutes() *gin.Engine {
 	paymentService := service.NewPaymentService(userRepo, planRepo, txRepo)
 	paymentHandler := handler.NewPaymentHandler(paymentService)
 
+	journalRepo := repository.NewJournalRepository(config.DB)
+	journalService := service.NewJournalService(journalRepo)
+	journalHandler := handler.NewJournalHandler(journalService)
+
 	api := r.Group("/api")
 	RegisterAuthRoutes(api, authHandler)
 	RegisterMoodRoutes(api, moodHandler)
@@ -58,6 +62,7 @@ func SetupRoutes() *gin.Engine {
 	RegisterPlanRoutes(api, planHandler)
 	RegisterUserRoutes(api, userHandler)
 	RegisterAdminRoutes(api, userHandler)
+	RegisterJournalRoutes(api, journalHandler)
 
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "EmoSpace backend is running 🚀"})
