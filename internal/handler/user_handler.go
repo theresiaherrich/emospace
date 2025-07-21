@@ -3,8 +3,9 @@ package handler
 import (
 	"emospaces-backend/internal/service"
 	"emospaces-backend/internal/utils"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type UserHandler struct {
@@ -86,3 +87,4 @@ func (h *UserHandler) GetAllUsers(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"users": users})
 }
+

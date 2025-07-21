@@ -154,3 +154,18 @@ func (h *AuthHandler) ResetPassword(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "Password successfully reset"})
 }
 
+func (h *AuthHandler) UpdateFCMToken(c *gin.Context) {
+	var input dto.UpdateFCMTokenRequest
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	userID := c.GetUint("user_id") 
+	err := h.service.UpdateFCMToken(userID, input.FCMToken)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal simpan token"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Token FCM disimpan"})
+}

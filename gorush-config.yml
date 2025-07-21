@@ -1,0 +1,7 @@
+core:
+  port: 8088
+  mode: "release"
+
+android:
+  enabled: true
+  api_key: "YOUR_FCM_SERVER_KEY"

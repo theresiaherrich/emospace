@@ -1,0 +1,8 @@
+version: '3'
+services:
+  gorush:
+    image: appleboy/gorush
+    ports:
+      - "8088:8088"
+    volumes:
+      - ./gorush-config.yml:/etc/gorush/config.yml

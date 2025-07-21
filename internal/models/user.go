@@ -19,4 +19,5 @@ type User struct {
 	ProfilePicture string     `json:"profile_picture"`
 	PremiumUntil   *time.Time `json:"premium_until"`
 	Role           string     `json:"role" gorm:"default:'user'"`
+	FCMToken       string     `json:"fcm_token"`
 }

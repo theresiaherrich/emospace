@@ -18,6 +18,8 @@ type UserService interface {
 	UpdateUser(user *models.User) error
 	ToProfileResponse(user *models.User) *dto.UserProfileResponse
 	GetAllUsers() ([]*models.User, error)
+	UpdateFCMToken(userID uint, token string) error
+	GetUsersWithoutMoodOrJournalToday() ([]models.User, error)
 }
 
 type userService struct {
@@ -101,4 +103,12 @@ func (s *userService) ToProfileResponse(user *models.User) *dto.UserProfileRespo
 
 func (s *userService) GetAllUsers() ([]*models.User, error) {
 	return s.repo.FindAll()
+}
+
+func (s *userService) UpdateFCMToken(userID uint, token string) error {
+	return s.repo.UpdateFCMToken(userID, token)
+}
+
+func (s *userService) GetUsersWithoutMoodOrJournalToday() ([]models.User, error) {
+	return s.repo.GetUsersWithoutMoodOrJournalToday()
 }

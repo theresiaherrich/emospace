@@ -17,6 +17,8 @@ type UserRepository interface {
 	GetByID(id uint) (*models.User, error)
 	Update(user *models.User) error
 	FindAll() ([]*models.User, error)
+	UpdateFCMToken(userID uint, token string) error
+	GetUsersWithoutMoodOrJournalToday() ([]models.User, error)
 }
 
 type userRepo struct {
@@ -79,3 +81,22 @@ func (r *userRepo) FindAll() ([]*models.User, error) {
 	err := r.db.Order("created_at desc").Find(&users).Error
 	return users, err
 }
+
+func (r *userRepo) UpdateFCMToken(userID uint, token string) error {
+	return r.db.Model(&models.User{}).Where("id = ?", userID).Update("fcm_token", token).Error
+}
+
+func (r *userRepo) GetUsersWithoutMoodOrJournalToday() ([]models.User, error) {
+	today := time.Now().Format("2006-01-02")
+	var users []models.User
+	err := r.db.Raw(`
+		SELECT * FROM users
+		WHERE id NOT IN (
+			SELECT user_id FROM moods WHERE DATE(created_at) = ?
+			UNION
+			SELECT user_id FROM journals WHERE DATE(created_at) = ?
+		)
+	`, today, today).Scan(&users).Error
+	return users, err
+}
+

@@ -13,6 +13,12 @@ type RegisterInput struct {
 	AgreeToTerms    bool   `json:"agree_to_terms" binding:"required"`
 }
 
+type LoginRequest struct {
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	FCMToken  string `json:"fcm_token"`
+}
+
 type LoginInput struct {
 	Identifier string `json:"identifier" binding:"required"`
 	Password   string `json:"password" binding:"required"`

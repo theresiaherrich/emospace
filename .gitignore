@@ -56,3 +56,4 @@ node_modules/
 *.coverprofile
 coverage.out
 emospaces.tar
+emospace-firebase-service-account.json
