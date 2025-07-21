@@ -15,7 +15,7 @@ type PaymentService interface {
 	GenerateSnapTokenFromPlan(userID uint, planID uint) (string, string, error)
 	HandleMidtransCallback(payload map[string]interface{}) error
 	GetUserTransactions(userID uint) ([]models.Transaction, error)
-    GetAllTransactions() ([]models.Transaction, error)
+	GetAllTransactions() ([]models.Transaction, error)
 }
 
 type paymentService struct {
@@ -25,11 +25,11 @@ type paymentService struct {
 }
 
 func NewPaymentService(userRepo repository.UserRepository, planRepo repository.PlanRepository, txRepo repository.TransactionRepository) PaymentService {
-    return &paymentService{
-        userRepo: userRepo,
-        planRepo: planRepo,
-        txRepo:   txRepo,
-    }
+	return &paymentService{
+		userRepo: userRepo,
+		planRepo: planRepo,
+		txRepo:   txRepo,
+	}
 }
 
 func (s *paymentService) GenerateSnapTokenFromPlan(userID uint, planID uint) (string, string, error) {
@@ -67,6 +67,11 @@ func (s *paymentService) HandleMidtransCallback(payload map[string]interface{}) 
 		return errors.New("invalid or missing transaction_status in payload")
 	}
 
+	grossAmountStr, ok := payload["gross_amount"].(string)
+	if !ok {
+		return errors.New("invalid or missing gross_amount in payload")
+	}
+
 	log.Println("[Midtrans Callback] order_id:", rawOrderID)
 	log.Println("[Midtrans Callback] transaction_status:", status)
 
@@ -84,7 +89,6 @@ func (s *paymentService) HandleMidtransCallback(payload map[string]interface{}) 
 		planID uint
 		userID uint
 	)
-
 	_, err := fmt.Sscanf(parts[1], "%d", &planID)
 	if err != nil {
 		return fmt.Errorf("failed to parse planID: %v", err)
@@ -99,10 +103,26 @@ func (s *paymentService) HandleMidtransCallback(payload map[string]interface{}) 
 		return fmt.Errorf("plan not found: %v", err)
 	}
 
+	var grossAmount int64
+	fmt.Sscanf(grossAmountStr, "%d", &grossAmount)
+
 	expiredAt := time.Now().AddDate(0, 0, plan.Duration)
 	err = s.userRepo.SetPremiumWithDuration(userID, expiredAt)
 	if err != nil {
 		return fmt.Errorf("failed to update premium status: %v", err)
+	}
+
+	transaction := &models.Transaction{
+		UserID:    userID,
+		PlanID:    planID,
+		OrderID:   rawOrderID,
+		Amount:    grossAmount,
+		Status:    status,
+		ExpiredAt: expiredAt,
+		CreatedAt: time.Now(),
+	}
+	if err := s.txRepo.Create(transaction); err != nil {
+		log.Println("Gagal menyimpan transaksi:", err)
 	}
 
 	log.Printf("[Midtrans Callback] Premium activated for user %d until %s\n", userID, expiredAt.Format(time.RFC3339))
@@ -110,10 +130,9 @@ func (s *paymentService) HandleMidtransCallback(payload map[string]interface{}) 
 }
 
 func (s *paymentService) GetUserTransactions(userID uint) ([]models.Transaction, error) {
-    return s.txRepo.FindByUserID(userID)
+	return s.txRepo.FindByUserID(userID)
 }
 
 func (s *paymentService) GetAllTransactions() ([]models.Transaction, error) {
-    return s.txRepo.FindAll()
+	return s.txRepo.FindAll()
 }
-

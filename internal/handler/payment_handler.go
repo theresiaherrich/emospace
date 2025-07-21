@@ -59,7 +59,7 @@ func (h *PaymentHandler) PaymentCallback(c *gin.Context) {
 }
 
 func (h *PaymentHandler) GetMyTransactions(c *gin.Context) {
-    userID := c.GetUint("user_id") // dari JWT middleware
+    userID := c.GetUint("user_id") 
 
     txs, err := h.Service.GetUserTransactions(userID)
     if err != nil {
@@ -71,7 +71,7 @@ func (h *PaymentHandler) GetMyTransactions(c *gin.Context) {
 }
 
 func (h *PaymentHandler) GetAllTransactions(c *gin.Context) {
-    role := c.GetString("role") // pastikan JWT punya claim `role`
+    role := c.GetString("role") 
     if role != "admin" {
         c.JSON(http.StatusForbidden, gin.H{"error": "Hanya admin yang bisa melihat semua transaksi"})
         return
