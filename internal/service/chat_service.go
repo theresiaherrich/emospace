@@ -6,6 +6,7 @@ import (
 	"emospaces-backend/pkg/ai"
 	"strings"
 	"time"
+	"unicode/utf8"
 )
 
 type ChatService interface {
@@ -23,6 +24,13 @@ func NewChatService(repo repository.ChatRepository) ChatService {
 	return &chatService{repo: repo}
 }
 
+func sanitizeUTF8(s string) string {
+	if !utf8.ValidString(s) {
+		return strings.ToValidUTF8(s, "")
+	}
+	return s
+}
+
 func (s *chatService) GenerateAIResponse(user *models.User, mood string, userMessage string) (string, error) {
 	history, _ := s.repo.GetRecentChatsByUser(user.Username, 5)
 
@@ -31,8 +39,8 @@ func (s *chatService) GenerateAIResponse(user *models.User, mood string, userMes
 	contextBuilder.WriteString("Mood awal user: " + mood + "\n")
 
 	for _, h := range history {
-		contextBuilder.WriteString("User: " + h.UserInput + "\n")
-		contextBuilder.WriteString("Space: " + h.AIOutput + "\n")
+		contextBuilder.WriteString("User: " + sanitizeUTF8(h.UserInput) + "\n")
+		contextBuilder.WriteString("Space: " + sanitizeUTF8(h.AIOutput) + "\n")
 	}
 
 	contextBuilder.WriteString("Sekarang user berkata: \"" + userMessage + "\"\n")
@@ -49,6 +57,9 @@ func (s *chatService) GenerateAIResponse(user *models.User, mood string, userMes
 	if err != nil {
 		return "", err
 	}
+
+	response = sanitizeUTF8(response)
+	userMessage = sanitizeUTF8(userMessage)
 
 	err = s.repo.SaveChat(models.ChatLog{
 		UserID:    user.ID,
@@ -88,7 +99,7 @@ func (s *chatService) GenerateStepByStepResponse(user *models.User, mood, userMe
 		stage = &models.ChatStage{
 			UserID:    user.ID,
 			Mood:      mood,
-			LastInput: userMessage,
+			LastInput: sanitizeUTF8(userMessage),
 			Stage:     1,
 		}
 		s.repo.SaveOrUpdateStage(stage)
@@ -99,7 +110,7 @@ func (s *chatService) GenerateStepByStepResponse(user *models.User, mood, userMe
 	if stage.Stage == 1 {
 		stage.Stage = 2
 		stage.Mood = mood
-		stage.LastInput = userMessage
+		stage.LastInput = sanitizeUTF8(userMessage)
 		s.repo.SaveOrUpdateStage(stage)
 
 		return []string{"Space: Hai! Aku di sini buat dengerin kamu. Gimana perasaanmu hari ini?"}, nil
@@ -111,10 +122,10 @@ func (s *chatService) GenerateStepByStepResponse(user *models.User, mood, userMe
 	prompt.WriteString("Kamu adalah Space, chatbot empatik remaja.\n")
 	prompt.WriteString("Mood user: " + stage.Mood + "\n")
 	for _, h := range history {
-		prompt.WriteString("User: " + h.UserInput + "\n")
-		prompt.WriteString("Space: " + h.AIOutput + "\n")
+		prompt.WriteString("User: " + sanitizeUTF8(h.UserInput) + "\n")
+		prompt.WriteString("Space: " + sanitizeUTF8(h.AIOutput) + "\n")
 	}
-	prompt.WriteString("Sekarang user berkata: " + userMessage + "\n")
+	prompt.WriteString("Sekarang user berkata: " + sanitizeUTF8(userMessage) + "\n")
 	prompt.WriteString("Balaslah dengan gaya validasi hangat, ringkas, dan beri semangat. Jangan panjang. Akhiri dengan ajakan konsultasi jika dirasa perlu.")
 
 	response, err := ai.SendToGemini(prompt.String())
@@ -126,8 +137,8 @@ func (s *chatService) GenerateStepByStepResponse(user *models.User, mood, userMe
 		UserID:    user.ID,
 		UserName:  user.Username,
 		Mood:      stage.Mood,
-		UserInput: userMessage,
-		AIOutput:  response,
+		UserInput: sanitizeUTF8(userMessage),
+		AIOutput:  sanitizeUTF8(response),
 	})
 
 	return []string{response}, nil
