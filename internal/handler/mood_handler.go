@@ -13,10 +13,14 @@ import (
 
 type MoodHandler struct {
 	Service service.MoodService
+	UserService service.UserService
 }
 
-func NewMoodHandler(service service.MoodService) *MoodHandler {
-	return &MoodHandler{Service: service}
+func NewMoodHandler(service service.MoodService, userService service.UserService) *MoodHandler {
+	return &MoodHandler{
+		Service:     service,
+		UserService: userService,
+	}
 }
 
 func (h *MoodHandler) SetMood(c *gin.Context) {
@@ -55,12 +59,24 @@ func (h *MoodHandler) GetMonthlyMood(c *gin.Context) {
 
 func (h *MoodHandler) GetMoodSummary(c *gin.Context) {
 	userID := c.GetUint("user_id")
-	monthStr := c.Query("month") // format YYYY-MM
+
+	user, err := h.UserService.FindByID(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengambil data pengguna"})
+		return
+	}
+
+	if !user.IsPremium {
+		c.JSON(http.StatusForbidden, gin.H{
+			"message": "Fitur ringkasan suasana hati hanya tersedia untuk pengguna Premium. Yuk upgrade sekarang ✨",
+		})
+		return
+	}
+
+	monthStr := c.Query("month")
 	month, err := time.Parse("2006-01", monthStr)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Format bulan salah. Gunakan format YYYY-MM",
-		})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Format bulan salah. Gunakan format YYYY-MM"})
 		return
 	}
 
@@ -72,11 +88,11 @@ func (h *MoodHandler) GetMoodSummary(c *gin.Context) {
 		})
 		return
 	}
+
 	cleaned := strings.ReplaceAll(summary, "\n", "<br>")
-	c.JSON(http.StatusOK, gin.H{
-		"summary": cleaned,
-	})
+	c.JSON(http.StatusOK, gin.H{"summary": cleaned})
 }
+
 
 func (h *MoodHandler) GetLatestMood(c *gin.Context) {
 	userID := c.GetUint("user_id")

@@ -35,7 +35,7 @@ func SetupRoutes() *gin.Engine {
 
 	moodRepo := repository.NewMoodRepository(db)
 	moodService := service.NewMoodService(moodRepo)
-	moodHandler := handler.NewMoodHandler(moodService)
+	moodHandler := handler.NewMoodHandler(moodService, userService)
 
 	chatRepo := repository.NewChatRepository(db)
 	aiHandler := handler.NewAIHandler(chatRepo, userRepo)

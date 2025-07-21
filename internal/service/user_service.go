@@ -12,6 +12,7 @@ import (
 type UserService interface {
 	Register(user *models.User) error
 	Login(identifier, password string) (*models.User, error)
+	FindByID(id uint) (*models.User, error)
 	FindByEmail(email string) (*models.User, error)
 	GetByID(userID uint) (*models.User, error)
 	UpdateUser(user *models.User) error
@@ -45,6 +46,10 @@ func (s *userService) Login(identifier, password string) (*models.User, error) {
 		return nil, errors.New("invalid email/username or password")
 	}
 	return user, nil
+}
+
+func (s *userService) FindByID(id uint) (*models.User, error) {
+	return s.repo.FindByID(id)
 }
 
 func (s *userService) FindByEmail(email string) (*models.User, error) {
