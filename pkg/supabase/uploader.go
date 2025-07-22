@@ -12,9 +12,9 @@ import (
 )
 
 var (
-	supabaseURL       = os.Getenv("SUPABASE_URL")             // e.g. https://xyzcompany.supabase.co
-	supabaseAPIKey    = os.Getenv("SUPABASE_API_KEY")         // service_role token
-	supabaseBucketURL = supabaseURL + "/storage/v1/object"    // base URL for upload
+	supabaseURL       = os.Getenv("SUPABASE_URL")             
+	supabaseAPIKey    = os.Getenv("SUPABASE_API_KEY")         
+	supabaseBucketURL = supabaseURL + "/storage/v1/object"    
 )
 
 func UploadJournalImage(fileHeader *multipart.FileHeader, userID uint) (string, error) {
@@ -29,8 +29,8 @@ func UploadJournalImage(fileHeader *multipart.FileHeader, userID uint) (string, 
 		return "", err
 	}
 
-	path := fmt.Sprintf("journals/user-%d-%d-%s", userID, time.Now().Unix(), fileHeader.Filename)
-	uploadURL := fmt.Sprintf("%s/journals/%s", supabaseBucketURL, path)
+	path := fmt.Sprintf("journal/user-%d-%d-%s", userID, time.Now().Unix(), fileHeader.Filename)
+	uploadURL := fmt.Sprintf("%s/journal/%s", supabaseBucketURL, path)
 
 	req, err := http.NewRequest("POST", uploadURL, bytes.NewReader(fileBytes))
 	if err != nil {
@@ -56,7 +56,7 @@ func UploadJournalImage(fileHeader *multipart.FileHeader, userID uint) (string, 
 }
 
 func DeleteImageFromSupabase(publicURL string) error {
-	parts := strings.Split(publicURL, "/journals/")
+	parts := strings.Split(publicURL, "/journal/")
 	if len(parts) != 2 {
 		return fmt.Errorf("invalid journal image URL")
 	}
