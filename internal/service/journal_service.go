@@ -59,6 +59,7 @@ func (s *journalService) GetJournals(userID uint) ([]dto.JournalResponse, error)
 			ID:      j.ID,
 			Title:   j.Title,
 			Content: j.Content,
+			ImageURL: j.ImageURL,
 			Date:    j.Date.Format("January 2, 2006"),
 		})
 	}
@@ -74,6 +75,7 @@ func (s *journalService) GetJournalDetail(id uint) (*dto.JournalResponse, error)
 		ID:      j.ID,
 		Title:   j.Title,
 		Content: j.Content,
+		ImageURL: j.ImageURL,
 		Date:    j.Date.Format("January 2, 2006"),
 	}, nil
 }
