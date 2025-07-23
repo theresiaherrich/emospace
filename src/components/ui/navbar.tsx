@@ -3,10 +3,11 @@ import { UserRound, Menu, X } from 'lucide-react';
 import Logo from '/assets/logo.svg';
 import Button from './button';
 import { useState, useEffect } from 'react';
+import { isLoggedIn } from '../../utils/auth';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogin = () => {
@@ -23,6 +24,8 @@ const Navbar = () => {
   };
 
   useEffect(() => {
+    setIsLogin(isLoggedIn());
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);

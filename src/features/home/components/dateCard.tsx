@@ -16,9 +16,9 @@ const DateCard = ({ imageSrc }: { imageSrc: string }) => {
   });
 
   return (
-    <Card className="max-w-sm bg-[#FDFEFF]">
-      <img src={imageSrc} alt="Mood image" className="rounded-xl w-[287px]" />
-      <div className="flex justify-between items-center mt-3 font-semibold text-lg">
+    <Card className="max-w-sm bg-[#FDFEFF] h-full min-w-fit">
+      <img src={imageSrc} alt="Mood image" className="rounded-xl w-[287px] h-40" />
+      <div className="flex justify-between items-center mt-4 font-semibold text-lg">
         <p>{formattedDate}</p>
         <span>{time}</span>
       </div>

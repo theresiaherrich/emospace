@@ -1,16 +1,23 @@
+import { useEffect, useState } from "react";
+import { getUserProfile } from "../../../services/userservice";
 import UserProfileCard from "../components/userprofileCard";
 
 const UserProfileContainer = () => {
+  const [profile, setProfile] = useState<any>(null);
+
+  useEffect(() => {
+    getUserProfile()
+      .then((data) => {
+        setProfile(data);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch user profile:", err);
+      })
+  }, []);
+
   return (
-    <div>
-      <UserProfileCard
-        name="John Doe"
-        email="a9Jd8@example.com"
-        phone="+1234567890"
-        isPremium={true}
-      ></UserProfileCard>
-    </div>
+    <UserProfileCard profile={profile} />
   );
-}
+};
 
 export default UserProfileContainer;

@@ -26,7 +26,7 @@ const CalendarPicker: React.FC<CalendarPickerProps> = ({
   const [open, setOpen] = useState(false);
 
   const getFormattedValue = () => {
-    if (!value) return '';
+    if (!value || isNaN(value.getTime())) return "";
     switch (variant) {
       case 'day':
         return format(value, 'MM/dd/yyyy');

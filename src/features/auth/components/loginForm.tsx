@@ -6,24 +6,27 @@ import { useNavigate } from 'react-router-dom';
 
 interface LoginFormProps {
   onSubmit: (data: {
-    email: string;
+    identifier: string;
     password: string;
+    rememberMe: boolean;
   }) => void;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
   const { register, handleSubmit } = useForm<{
-    email: string;
+    identifier: string;
     password: string;
+    rememberMe: boolean;
   }>();
   const navigate = useNavigate();
 
   const handleLogin = (data: {
-    email: string;
+    identifier: string;
     password: string;
+    rememberMe: boolean;
   }) => {
     onSubmit(data);
-    navigate('/register');
+    navigate('/');
   };
 
   return (
@@ -36,7 +39,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
         placeholder="Enter your email..."
         title="Email"
         required
-        {...register('email')}
+        {...register('identifier')}
       />
       <Input
         type="password"
@@ -47,7 +50,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
       />
       <div className="text-xs text-[#474747] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
         <label className="flex items-center gap-2">
-          <input type="checkbox" className="accent-[#593187]" />
+          <input type="checkbox" className="accent-[#593187]" {...register('rememberMe')} />
           Remember me
         </label>
         <a href="#" className="text-right underline hover:text-[#341A55]">

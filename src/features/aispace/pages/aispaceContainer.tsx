@@ -19,7 +19,7 @@ const AispaceContainer: React.FC = () => {
           <div className="relative">
             <Button
               onClick={() => navigate("/")}
-              className="text-white text-sm rounded-xl bg-[#FF8EC4] bg-opacity-75 hover:bg-[#FF8EC4] px-8 sm:px-9 py-3 border-2 border-[#FF8FCD]"
+              className="text-white text-sm rounded-xl bg-[#FF8EC4] bg-opacity-75 hover:bg-[#FF8EC4] px-9 py-3 border-2 border-[#FF8FCD] w-full font-bold"
             >
               Mood Summary
             </Button>
@@ -30,7 +30,7 @@ const AispaceContainer: React.FC = () => {
             <Button
               onClick={() => navigate("/space-chat")}
               variant="primary"
-              className="text-white text-sm rounded-xl bg-[#633796] bg-opacity-75 px-6 py-3 border-2 border-[#C19EDD]"
+              className="text-white text-sm rounded-xl bg-[#633796] bg-opacity-75 px-6 py-3 border-2 border-[#C19EDD] w-full"
             >
               Let’s Meet AISpace
             </Button>

@@ -11,10 +11,13 @@ const genderOptions = ["Male", "Female"];
 interface RegisterFormProps {
   onSubmit: (data: {
     email: string;
+    username?: string;
     password: string;
+    confirm_password: string;
     name: string;
     gender: string;
-    birthdate: string;
+    birth_date: string;
+    agree_to_terms: boolean;
   }) => void;
 }
 
@@ -23,8 +26,17 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
   const navigate = useNavigate();
 
   const handleRegister = (data: any) => {
-    const birthdate = data.birthdate instanceof Date
-      ? data.birthdate.toISOString().split("T")[0]
+    if (data.password !== data.confirm_password) {
+      alert("Passwords do not match.");
+      return;
+    }
+    if (!data.agree_to_terms) {
+      alert("You must agree to the privacy policy.");
+      return;
+    }
+
+    const birthdate = data.birth_date instanceof Date
+      ? data.birth_date.toISOString().split("T")[0]
       : "";
 
     const finalData = {
@@ -32,7 +44,10 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
       password: data.password,
       name: data.name,
       gender: data.gender,
-      birthdate,
+      birth_date: birthdate,
+      confirm_password: data.confirm_password,
+      agree_to_terms: data.agree_to_terms,
+      username: data.username || undefined,
     };
 
     onSubmit(finalData);
@@ -76,7 +91,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
         )}
       />
       <Controller
-        name="birthdate"
+        name="birth_date"
         control={control}
         rules={{ required: true }}
         render={({ field }) => (
@@ -103,9 +118,10 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
         title="Confirm Password"
         required
         className="w-full"
+        {...register("confirm_password")}
       />
       <label className="flex items-center gap-2 text-xs text-[#474747]">
-        <input type="checkbox" className="accent-[#593187]" />
+        <input type="checkbox" className="accent-[#593187]" {...register("agree_to_terms")} />
         By registering in emoSpace, I agree to the privacy policy.
       </label>
       <Button type="submit" variant="primary" className="w-full">Save</Button>

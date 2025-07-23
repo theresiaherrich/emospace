@@ -10,7 +10,7 @@ interface ChatHeaderProps {
 
 const ChatHeader: React.FC<ChatHeaderProps> = ({ onSearch, onClose, onNavigateNext, onNavigatePrev }) => {
   return (
-    <div className="flex flex-row items-center justify-between bg-[#351A57] rounded-full px-5 sm:px-6 py-2 md:py-4 lg:h-20 gap-3">
+    <div className="flex flex-row items-center justify-between bg-[#351A57] px-5 sm:px-7 lg:px-20 py-2 md:py-4 lg:h-20 gap-3">
       <div className="flex items-center gap-2 justify-start w-full lg:w-auto">
         <img src="/assets/3.svg" alt="Space" className="w-14 h-14 sm:w-16 sm:h-16" />
         <h1 className="font-spartan text-2xl sm:text-3xl font-medium text-white">Space</h1>
@@ -23,7 +23,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ onSearch, onClose, onNavigateNe
             onSearch={onSearch}
             onNavigateNext={onNavigateNext}
             onNavigatePrev={onNavigatePrev}
-            className="w-full"
+            className="w-fit"
           />
         </div>
         <button onClick={onClose} className="flex-shrink-0">

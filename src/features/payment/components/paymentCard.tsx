@@ -33,7 +33,7 @@ const PaymentCard = () => {
         {paymentType === "premium" ? (
           <img src="/assets/crown.svg" alt="" className="w-20 sm:w-28" />
         ) : (
-          <img src="/assets/specialist-icon.svg" alt="" className="w-20 sm:w-24" />
+          <img src="/assets/specialist-icon.png" alt="" className="w-20 sm:w-24" />
         )}
         <div className="flex flex-col text-white">
           <h1 className="font-spartan text-lg sm:text-2xl md:text-3xl font-bold uppercase">

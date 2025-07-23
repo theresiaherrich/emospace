@@ -2,19 +2,38 @@ import * as React from "react";
 import RegisterForm from "../components/registerForm";
 import { useNavigate } from "react-router-dom";
 import Logo from "/assets/logo.svg";
+import { useRegister } from "../../../hooks/useregister";
 
 export const RegisterContainer: React.FC = () => {
   const navigate = useNavigate();
+  const { handleRegister, error } = useRegister();
 
-  const onSubmit = (data: {
+  const onSubmit = async (data: {
     email: string;
     password: string;
     name: string;
     gender: string;
-    birthdate: string;
+    birth_date: string;
+    confirm_password: string;
+    agree_to_terms: boolean;
+    username?: string;
   }) => {
-    console.log(data);
-    navigate("/login");
+    const message = await handleRegister(
+      data.name,
+      data.username || data.email.split("@")[0],
+      data.email,
+      data.password,
+      data.confirm_password,
+      data.gender,
+      data.birth_date,
+      data.agree_to_terms
+    );
+    if (message) {
+      alert(message);
+      navigate("/login");
+    } else {
+      alert(error || "Registration failed. Please try again.");
+    }
   };
 
   return (
