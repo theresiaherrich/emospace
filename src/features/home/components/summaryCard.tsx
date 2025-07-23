@@ -33,7 +33,7 @@ const SummaryCard = () => {
             </div>
             {isPremium ? (
                 <div className="flex flex-col items-center justify-center py-2 px-3">
-                    <p className="font-medium text-[#1C1C1C] text-justify leading-snug" dangerouslySetInnerHTML={{ __html: summary }}/>
+                    <p className="font-medium text-[#1C1C1C] text-justify leading-snug break-words overflow-hidden text-ellipsis line-clamp-[10]" dangerouslySetInnerHTML={{ __html: summary }}/>
                 </div>
             ) : (
                 <div className="flex flex-col items-center justify-center h-full">

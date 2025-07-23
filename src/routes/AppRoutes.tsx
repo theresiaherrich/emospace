@@ -17,6 +17,8 @@ import { ProfileLayout } from '../layouts/profileLayout';
 import UserProfilePage from '../pages/userprofile';
 import EditProfilePage from '../pages/editprofile';
 import AuthMiddleware from '../middleware/authmiddleware';
+import PremiumMiddleware from '../middleware/premiummiddleware';
+import SummaryPage from '../pages/summary';
 
 const AppRoutes = () => {
   return (
@@ -35,6 +37,7 @@ const AppRoutes = () => {
           <Route path="/my-journal/detail/:id" element={<AuthMiddleware><DetailJournalPage /></AuthMiddleware>} />
           <Route path="/premium" element={<AuthMiddleware><PremiumPage /></AuthMiddleware>} />
           <Route path="/payment" element={<AuthMiddleware><PaymentPage /></AuthMiddleware>} />
+          <Route path="/summary" element={<AuthMiddleware><PremiumMiddleware><SummaryPage /></PremiumMiddleware></AuthMiddleware>} />
         </Route>
         <Route element={<ChatbotLayout />}>
           <Route path="/space-chat" element={<AuthMiddleware><SpaceChatbotPage /></AuthMiddleware>} />
