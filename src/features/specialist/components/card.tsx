@@ -16,7 +16,7 @@ interface CardProps {
 const CardSpecialist: React.FC<CardProps> = ({ name, photo, job, expertise, experience, rating, price, onClick  }) => {
 
     return (
-        <Card className="bg-[#E9DDF4] border border-[#666666] max-w-[360px]">
+        <Card className="bg-[#E9DDF4] border border-[#666666] max-w-[360px] lg:w-[360px]">
             <div className="flex gap-3">
                 <img src={photo} alt="Specialist Photo" className="w-20 h-24 rounded-xl"/>
                 <div className="font-spartan">
