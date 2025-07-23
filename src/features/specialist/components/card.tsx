@@ -18,7 +18,7 @@ const CardSpecialist: React.FC<CardProps> = ({ name, photo, job, expertise, expe
     return (
         <Card className="bg-[#E9DDF4] border border-[#666666] max-w-[360px] lg:w-[360px]">
             <div className="flex gap-3">
-                <img src={photo} alt="Specialist Photo" className="w-20 h-24 rounded-xl"/>
+                <img src={photo} alt="Specialist Photo" className="w-20 h-24 rounded-xl object-cover"/>
                 <div className="font-spartan">
                     <h3 className="text-[#1C1C1C] font-bold text-left leading-5">{name}</h3>
                     <p className="text-opacity-60 text-[#1C1C1C] text-sm font-medium text-left">{job}</p>

@@ -5,10 +5,11 @@ interface ConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  amount: number;
+  amount?: number;
+  message: string;
 }
 
-const ConfirmModal = ({ isOpen, onClose, onConfirm, amount }: ConfirmModalProps) => {
+const ConfirmModal = ({ isOpen, onClose, onConfirm, amount, message }: ConfirmModalProps) => {
   if (!isOpen) return null;
 
   return (
@@ -19,12 +20,14 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, amount }: ConfirmModalProps)
         </button>
 
         <h2 className="text-white text-lg sm:text-xl font-bold mb-2 text-center">
-          Lanjutkan Pembayaran Sebesar
+          {message}
         </h2>
 
-        <div className="text-center text-white text-lg sm:text-xl font-bold mb-8">
-          Rp <span>{amount.toLocaleString("id-ID")}</span> ?
-        </div>
+        {amount && (
+          <div className="text-center text-white text-lg sm:text-xl font-bold mb-8">
+            <span>Rp {amount?.toLocaleString("id-ID")}?</span>
+          </div>
+        )}
 
         <div className="flex justify-center items-center gap-3">
           <Button variant="secondary" onClick={onClose} className="py-1 px-4">
