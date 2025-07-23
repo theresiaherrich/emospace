@@ -51,7 +51,7 @@ func UploadJournalImage(fileHeader *multipart.FileHeader, userID uint) (string, 
 		return "", fmt.Errorf("failed to upload image: %s", resp.Status)
 	}
 
-	publicURL := fmt.Sprintf("%s/storage/v1/object/public/journals/%s", supabaseURL, path)
+	publicURL := fmt.Sprintf("%s/storage/v1/object/public/journal/%s", supabaseURL, path)
 	return publicURL, nil
 }
 
@@ -60,7 +60,7 @@ func DeleteImageFromSupabase(publicURL string) error {
 	if len(parts) != 2 {
 		return fmt.Errorf("invalid journal image URL")
 	}
-	path := "journals/" + parts[1]
+	path := "journal/" + parts[1]
 
 	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/%s", supabaseBucketURL, path), nil)
 	if err != nil {

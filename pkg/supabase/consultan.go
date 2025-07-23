@@ -51,7 +51,7 @@ func UploadConsultanImage(fileHeader *multipart.FileHeader, consultanName string
 		return "", fmt.Errorf("failed to upload consultan image: %s, %s", resp.Status, string(body))
 	}
 
-	publicURL := fmt.Sprintf("%s/storage/v1/object/public/consultans/%s", supabaseURL, path)
+	publicURL := fmt.Sprintf("%s/storage/v1/object/public/%s", supabaseURL, path)
 	return publicURL, nil
 }
 
