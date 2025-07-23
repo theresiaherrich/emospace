@@ -1,6 +1,6 @@
-import { XIcon, CameraIcon } from "lucide-react";
+import { XIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import EditProfileForm from "./editprofileForm";
 
 export type UserProfile = {
@@ -21,19 +21,6 @@ interface EditProfileCardProps {
 const EditProfileCard: React.FC<EditProfileCardProps> = ({ user, onSubmit }) => {
   const navigate = useNavigate();
   const [preview, setPreview] = useState<string>(user.profile_picture || "");
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleCameraClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setPreview(imageUrl);
-    }
-  };
 
   return (
     <div className="rounded-[30px] overflow-hidden bg-[#E9DDF4] shadow-lg relative font-spartan w-full max-w-xl mx-6 sm:mx-auto">
@@ -57,23 +44,16 @@ const EditProfileCard: React.FC<EditProfileCardProps> = ({ user, onSubmit }) => 
             alt="user"
             className="w-24 h-24 sm:w-28 sm:h-28 bg-[#E9DDF4] rounded-full object-cover"
           />
-          <CameraIcon
-            fill="white"
-            className="absolute top-16 sm:top-20 right-[36%] sm:right-[42%] w-7 h-7 sm:w-9 sm:h-9 text-slate-100 cursor-pointer"
-            onClick={handleCameraClick}
-          />
-          <input
-            type="file"
-            accept="image/*"
-            ref={fileInputRef}
-            style={{ display: "none" }}
-            onChange={handleImageChange}
-          />
         </div>
       </div>
 
       <div className="px-4 pb-8 pt-5 flex flex-col gap-4 justify-center items-center">
-        <EditProfileForm user={user} onSubmit={onSubmit} />
+        <EditProfileForm
+          user={user}
+          onSubmit={onSubmit}
+          previewImage={preview}
+          setPreviewImage={setPreview}
+        />
       </div>
     </div>
   );

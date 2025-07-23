@@ -1,11 +1,10 @@
 import * as React from "react";
 import { useForm, Controller } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import Button from "../../../components/ui/button";
 import Input from "../../../components/ui/input";
 import Dropdown from "../../../components/ui/dropdown";
 import { CalendarPicker } from "../../../components/ui/calendar";
-import { useRef, useState } from "react";
+import { CameraIcon } from "lucide-react";
 
 const genderOptions = ["Male", "Female"];
 
@@ -17,25 +16,16 @@ interface EditProfileFormProps {
     gender: string;
     birth_date: string;
     address: string;
-    profile_picture?: string;
+    profile_picture?: string | File;
   };
   onSubmit: (data: any) => void;
+  previewImage: string;
+  setPreviewImage: (url: string) => void;
 }
 
-const EditProfileForm: React.FC<EditProfileFormProps> = ({ user, onSubmit }) => {
-  const navigate = useNavigate();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [previewImage, setPreviewImage] = useState<string>(user?.profile_picture || "");
-
-  const { control, handleSubmit, register, setValue } = useForm<{
-    name: string;
-    email: string;
-    phone: string;
-    gender: string;
-    birth_date: Date;
-    address: string;
-    profile_picture: File | string;
-  }>({
+const EditProfileForm: React.FC<EditProfileFormProps> = ({ user, onSubmit, setPreviewImage }) => {
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const { control, handleSubmit, register, setValue } = useForm({
     defaultValues: {
       name: user?.name,
       email: user?.email,
@@ -47,14 +37,12 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({ user, onSubmit }) => 
     },
   });
 
-
   const handleProfile = (data: any) => {
     const finalData = {
       ...data,
       birth_date: data.birth_date.toISOString().split("T")[0],
     };
     onSubmit(finalData);
-    navigate("/user-profile");
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,13 +56,25 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({ user, onSubmit }) => 
 
   return (
     <form onSubmit={handleSubmit(handleProfile)} className="flex flex-col gap-4 w-full max-w-md font-lexend">
-      <input
-        type="file"
-        accept="image/*"
-        ref={fileInputRef}
-        style={{ display: "none" }}
-        onChange={handleImageChange}
-      />
+      <div className="relative z-10 -mt-4 flex flex-col items-center">
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          style={{ display: "none" }}
+          onChange={handleImageChange}
+        />
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className="absolute -top-6 sm:-top-8 right-[36%] sm:right-[38%]"
+        >
+          <CameraIcon
+            fill="white"
+            className="w-7 h-7 sm:w-9 sm:h-9 text-slate-100 cursor-pointer"
+          />
+        </button>
+      </div>
       <Input
         type="text"
         placeholder="Enter your name..."
@@ -125,7 +125,6 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({ user, onSubmit }) => 
             options={genderOptions}
             value={field.value}
             onChange={field.onChange}
-            placeholder="Select Gender"
             className="w-full bg-white border border-[#9E9E9E]"
           />
         )}

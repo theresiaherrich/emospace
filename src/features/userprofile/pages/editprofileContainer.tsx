@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import EditProfileCard from "../components/editprofileCard";
 import { getUserProfile, updateUserProfile } from "../../../services/userservice";
+import { useNavigate } from "react-router-dom";
 
 const EditProfileContainer = () => {
   const [user, setUser] = useState<any>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -40,8 +42,15 @@ const EditProfileContainer = () => {
         formData.append("profile_picture", data.profile_picture);
       }
 
+      for (let pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+      }
+
+      console.log("profile_picture", data.profile_picture);
+
       await updateUserProfile(formData);
       alert("Profile updated successfully");
+      navigate("/user-profile");
     } catch (err) {
       console.error("Failed to update profile:", err);
       alert("Failed to update profile");

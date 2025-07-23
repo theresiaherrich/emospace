@@ -4,34 +4,57 @@ import DateCard from "../components/dateCard";
 import MoodCard from "../components/moodCard";
 import MindToTellCard from "../components/mindtellCard";
 import CalendarMood from "../components/moodCalendar";
-import { type MoodType, type MoodMap } from "../types/type";
-import { format } from "date-fns";
+import { type MoodType, type MoodMap, moodColors } from "../types/type";
+import { formatInTimeZone } from "date-fns-tz";
 import Card from "../../../components/ui/card";
 import Button from "../../../components/ui/button";
 import SummaryCard from "../components/summaryCard";
-import { postMood } from "../../../services/moodservice";
+import { postMood, getMonthlyMood } from "../../../services/moodservice";
+
+const isValidMood = (mood: any): mood is MoodType => {
+  return Object.keys(moodColors).includes(mood);
+};
 
 const HomeContainer: React.FC = () => {
   const [moodData, setMoodData] = useState<MoodMap>({});
-  const [refreshKey, setRefreshKey] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const stored = localStorage.getItem("moodData");
-    if (stored) {
-      setMoodData(JSON.parse(stored));
+  const fetchMoods = async () => {
+    const month = formatInTimeZone(new Date(), 'Asia/Jakarta', "yyyy-MM");
+    try {
+      const res = await getMonthlyMood(month);
+      const resultWithColor: MoodMap = {};
+      for (const item of res) {
+        const { date, mood_code } = item;
+        if (date && isValidMood(mood_code)) {
+          resultWithColor[date] = {
+            mood_code,
+            color: moodColors[mood_code],
+          };
+        }
+      }
+
+      setMoodData(resultWithColor);
+    } catch (e) {
+      console.error("Failed to fetch mood from backend:", e);
     }
-  }, []);
+  };
+
+  fetchMoods();
+}, []);
 
   const handleMoodSelect = async (mood_code: MoodType) => {
-    const today = format(new Date(), "yyyy-MM-dd");
-    const updated = { ...moodData, [today]: mood_code };
+    const today = formatInTimeZone(new Date(), 'Asia/Jakarta', "yyyy-MM-dd");
+    const color = moodColors[mood_code];
+    const newMood = { mood_code, color, date: today };
 
     try {
-      await postMood(mood_code);
-      setMoodData(updated);
-      localStorage.setItem("moodData", JSON.stringify(updated));
-      setRefreshKey((prev) => prev + 1);
+      await postMood(newMood);
+      setMoodData((prev) => ({
+        ...prev,
+        [today]: newMood,
+      }));
     } catch (err) {
       console.error("Failed to post mood:", err);
     }
@@ -39,15 +62,11 @@ const HomeContainer: React.FC = () => {
 
   const greeting = () => {
     const hour = new Date().getHours();
-    if (hour >= 5 && hour < 12) {
-      return "Good Morning";
-    } else if ( hour >= 12 && hour < 17) {
-      return "Good Afternoon";
-    } else if (hour >= 17 && hour < 21) {
-      return "Good Evening";
-    }
+    if (hour >= 5 && hour < 12) return "Good Morning";
+    if (hour >= 12 && hour < 17) return "Good Afternoon";
+    if (hour >= 17 && hour < 21) return "Good Evening";
     return "Good Night";
-  }
+  };
 
   return (
     <div className="bg-home bg-[center_top] bg-cover bg-no-repeat min-h-screen w-full">
@@ -74,7 +93,7 @@ const HomeContainer: React.FC = () => {
               Here Is Your Mood Tracker
             </h1>
             <div className="flex flex-col xl:flex-row gap-6 items-center justify-center w-full">
-              <CalendarMood key={refreshKey} moodData={moodData} />
+              <CalendarMood moodData={moodData} />
               <SummaryCard />
             </div>
           </div>
@@ -84,7 +103,7 @@ const HomeContainer: React.FC = () => {
               {["#E7DCF0", "#E2D2EF", "#DCCBEB"].map((color, idx) => (
                 <Card
                   key={idx}
-                  className={`flex flex-col gap-5 pt-10 pb-9 px-6 items-center rounded-[150px] h-[510px] w-full max-w-[234px] shadow-[5px_5px_20px_0px_#00000040]`}
+                  className="flex flex-col gap-5 pt-10 pb-9 px-6 items-center rounded-[150px] h-[510px] w-full max-w-[234px] shadow-[5px_5px_20px_0px_#00000040]"
                   style={{ backgroundColor: color }}
                 >
                   <img src="/assets/bintang-ungu.svg" alt="" className="h-10 w-10" />
@@ -95,7 +114,11 @@ const HomeContainer: React.FC = () => {
                     <p className="text-sm font-semibold text-[#969696]">28/06/2025</p>
                   </div>
                   <div className="text-sm md:text-base/5 font-medium text-center font-spartan text-[#1C1C1C] text-opacity-80">
-                    Sabtu malam di Malang, tapi aku lagi di kosan, bukan di kafe. Deadline tugas Makroekonomi udah mepet banget, rasanya kepala mau pecah. Materi kuliah numpuk, harus nyari jurnal juga, bikin mata perih. <br /><br />Tadi sempat bikin kopi instan dingin biar melek tapi malah kembung...
+                    Sabtu malam di Malang, tapi aku lagi di kosan, bukan di kafe. Deadline tugas
+                    Makroekonomi udah mepet banget, rasanya kepala mau pecah. Materi kuliah numpuk,
+                    harus nyari jurnal juga, bikin mata perih. <br />
+                    <br />
+                    Tadi sempat bikin kopi instan dingin biar melek tapi malah kembung...
                   </div>
                 </Card>
               ))}
@@ -118,7 +141,6 @@ const HomeContainer: React.FC = () => {
               </Button>
             </div>
           </div>
-
         </div>
       </div>
     </div>

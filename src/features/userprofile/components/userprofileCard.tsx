@@ -6,10 +6,12 @@ import {
   LockKeyhole,
   SquareGanttChart,
   Languages,
+  LogOut
 } from "lucide-react";
 import MenuItem from "../components/menuitem";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { logout } from "../../../utils/auth";
 
 interface UserProfileCardProps {
   profile: {
@@ -40,10 +42,18 @@ const UserProfileCard = ({ profile }: UserProfileCardProps) => {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  }
+
   return (
     <div className="rounded-[30px] overflow-hidden bg-[#E9DDF4] shadow-lg relative font-spartan w-full max-w-2xl mx-auto">
       <button className="absolute top-4 left-4 text-white z-10" onClick={() => navigate("/")}>
         <XIcon className="w-6 h-6 sm:w-7 sm:h-7" />
+      </button>
+      <button className="absolute top-5 right-5 text-white z-10" onClick={handleLogout}>
+        <LogOut className="w-5 h-5 sm:w-6 sm:h-6" />
       </button>
 
       <div className="relative">
@@ -53,7 +63,7 @@ const UserProfileCard = ({ profile }: UserProfileCardProps) => {
         </div>
 
         <div className="relative z-10 -mt-20 flex flex-col items-center">
-          <img src={ profile?.profile_picture || "/assets/photo-profil.svg"} alt="user" className="w-24 h-24 sm:w-28 sm:h-28 bg-[#E9DDF4] rounded-full"/>
+          <img src={ profile?.profile_picture || "/assets/photo-profil.svg"} alt="user" className="w-24 h-24 sm:w-28 sm:h-28 bg-[#E9DDF4] rounded-full items-center object-cover"/>
           {profile?.is_premium && (
             <img src="/assets/crown-prem.svg" alt="Premium" className="absolute -top-6 right-[33%] sm:right-[38%] w-10 h-10 sm:w-12 sm:h-12"/>
           )}

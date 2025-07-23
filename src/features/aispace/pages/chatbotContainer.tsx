@@ -43,7 +43,7 @@ const ChatbotContainer = () => {
           const showDate = currentDate && currentDate !== prevDate;
 
           return (
-            <div key={index} ref={(el) => {matchRefs.current[index] = el}}>
+            <div key={index} ref={(el) => { matchRefs.current[index] = el; }}>
               {showDate && (
                 <div className="text-center justify-center mx-auto bg-[#351A57] text-white px-6 py-1 text-sm rounded-xl w-fit mb-2">
                   {formatDate(currentDate)}
@@ -57,11 +57,11 @@ const ChatbotContainer = () => {
           );
         })}
 
-        {chatLog.length === 1 && (
+        {/* { && (
           <div className="flex flex-wrap gap-4 sm:gap-6 lg:gap-7 justify-center px-2">
             <OptionsLabel options={moodOptions} onSelect={handleOptionSelect} />
           </div>
-        )}
+        )} */}
 
         {isBotTyping && (
           <div className="flex justify-start">
