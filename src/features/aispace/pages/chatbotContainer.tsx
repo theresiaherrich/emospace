@@ -2,19 +2,19 @@ import { useNavigate } from 'react-router-dom';
 import ChatBubble from '../../../components/ui/bubbleChat';
 import ChatInput from '../../../components/ui/chatInput';
 import ChatHeader from '../components/chatHeader';
-import OptionsLabel from '../../../components/ui/optionslabel';
+//import OptionsLabel from '../../../components/ui/optionslabel';
 import { useAIChat } from '../hooks/use-aichat';
 import { highlightText } from '../components/highlightText';
 
 const ChatbotContainer = () => {
   const navigate = useNavigate();
-  const moodOptions = ['Happy', 'Sad', 'Calm', 'Upset', 'Angry', 'Spectacular'];
+//  const moodOptions = ['Happy', 'Sad', 'Calm', 'Upset', 'Angry', 'Spectacular'];
 
   const {
     message, setMessage,
     chatLog, isBotTyping,
     matchRefs, searchTerm, bottomRef,
-    handleSend, handleOptionSelect,
+    handleSend, //handleOptionSelect,
     handleSearchQuery, handleNextMatch, handlePrevMatch,
   } = useAIChat();
 

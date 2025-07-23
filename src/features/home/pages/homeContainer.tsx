@@ -11,49 +11,46 @@ import Button from "../../../components/ui/button";
 import SummaryCard from "../components/summaryCard";
 import { postMood, getMonthlyMood } from "../../../services/moodservice";
 
-const isValidMood = (mood: any): mood is MoodType => {
-  return Object.keys(moodColors).includes(mood);
-};
+const isValidMood = (m: any): m is MoodType => Object.keys(moodColors).includes(m);
 
 const HomeContainer: React.FC = () => {
   const [moodData, setMoodData] = useState<MoodMap>({});
   const navigate = useNavigate();
 
   useEffect(() => {
-  const fetchMoods = async () => {
-    const month = formatInTimeZone(new Date(), 'Asia/Jakarta', "yyyy-MM");
-    try {
-      const res = await getMonthlyMood(month);
-      const resultWithColor: MoodMap = {};
-      for (const item of res) {
-        const { date, mood_code } = item;
-        if (date && isValidMood(mood_code)) {
-          resultWithColor[date] = {
-            mood_code,
-            color: moodColors[mood_code],
-          };
+    const fetchMoods = async () => {
+      const month = formatInTimeZone(new Date(), 'Asia/Jakarta', 'yyyy-MM');
+      try {
+        const res = await getMonthlyMood(month);
+        const moodMap: MoodMap = {};
+
+        for (const item of res) {
+          const { date, mood_code } = item;
+          if (date && isValidMood(mood_code)) {
+            moodMap[date] = {
+              mood_code,
+              color: moodColors[mood_code],
+            };
+          }
         }
+
+        setMoodData(moodMap);
+      } catch (err) {
+        console.error("Failed to fetch moods:", err);
       }
+    };
 
-      setMoodData(resultWithColor);
-    } catch (e) {
-      console.error("Failed to fetch mood from backend:", e);
-    }
-  };
-
-  fetchMoods();
-}, []);
+    fetchMoods();
+  }, []);
 
   const handleMoodSelect = async (mood_code: MoodType) => {
-    const today = formatInTimeZone(new Date(), 'Asia/Jakarta', "yyyy-MM-dd");
+    const date = formatInTimeZone(new Date(), 'Asia/Jakarta', 'yyyy-MM-dd');
     const color = moodColors[mood_code];
-    const newMood = { mood_code, color, date: today };
-
     try {
-      await postMood(newMood);
+      await postMood({ date, mood_code, color });
       setMoodData((prev) => ({
         ...prev,
-        [today]: newMood,
+        [date]: { mood_code, color },
       }));
     } catch (err) {
       console.error("Failed to post mood:", err);
