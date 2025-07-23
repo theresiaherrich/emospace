@@ -46,17 +46,17 @@ func SetupRoutes() *gin.Engine {
 	planHandler := handler.NewPlanHandler(planService)
 
 	txRepo := repository.NewTransactionRepository(db)
-
-	paymentService := service.NewPaymentService(userRepo, planRepo, txRepo)
+	consultanRepo := repository.NewConsultanRepository(db)
+	consultanService := service.NewConsultanService(consultanRepo)
+	consultanHandler := handler.NewConsultanHandler(consultanService)
+	
+	paymentService := service.NewPaymentService(userRepo, planRepo, txRepo, consultanRepo)
 	paymentHandler := handler.NewPaymentHandler(paymentService)
 
 	journalRepo := repository.NewJournalRepository(config.DB)
 	journalService := service.NewJournalService(journalRepo)
 	journalHandler := handler.NewJournalHandler(journalService)
 
-	consultanRepo := repository.NewConsultanRepository(db)
-	consultanService := service.NewConsultanService(consultanRepo)
-	consultanHandler := handler.NewConsultanHandler(consultanService)
 
 	api := r.Group("/api")
 	RegisterAuthRoutes(api, authHandler)

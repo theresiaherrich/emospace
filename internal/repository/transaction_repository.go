@@ -9,6 +9,7 @@ type TransactionRepository interface {
     Create(tx *models.Transaction) error
     FindByUserID(userID uint) ([]models.Transaction, error)
     FindAll() ([]models.Transaction, error)
+    UpdateTransactionStatus(orderID string, status string) error
 }
 
 type transactionRepository struct {
@@ -35,3 +36,8 @@ func (r *transactionRepository) FindAll() ([]models.Transaction, error) {
     return txs, err
 }
 
+func (r *transactionRepository) UpdateTransactionStatus(orderID string, status string) error {
+	return r.db.Model(&models.Transaction{}).
+		Where("order_id = ?", orderID).
+		Update("status", status).Error
+}

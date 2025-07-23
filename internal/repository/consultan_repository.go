@@ -2,6 +2,8 @@ package repository
 
 import (
 	"emospaces-backend/internal/models"
+	"time"
+
 	"gorm.io/gorm"
 )
 
@@ -11,6 +13,7 @@ type ConsultanRepository interface {
 	FindByID(id uint) (*models.Consultan, error)
 	Update(c *models.Consultan) error
 	Delete(id uint) error
+	CreateAccess(userID, consultanID uint) error
 }
 
 type consultanRepository struct {
@@ -43,4 +46,13 @@ func (r *consultanRepository) Update(c *models.Consultan) error {
 
 func (r *consultanRepository) Delete(id uint) error {
 	return r.db.Delete(&models.Consultan{}, id).Error
+}
+
+func (r *consultanRepository) CreateAccess(userID, consultanID uint) error {
+	access := &models.ConsultanAccess{
+		UserID:      userID,
+		ConsultanID: consultanID,
+		CreatedAt:   time.Now(),
+	}
+	return r.db.Create(access).Error
 }

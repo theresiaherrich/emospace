@@ -16,19 +16,24 @@ type PaymentService interface {
 	HandleMidtransCallback(payload map[string]interface{}) error
 	GetUserTransactions(userID uint) ([]models.Transaction, error)
 	GetAllTransactions() ([]models.Transaction, error)
+	GenerateSnapTokenForConsultan(userID, consultanID uint) (string, string, error)
+	UpdateTransactionStatus(orderID string, status string) error
+	
 }
 
 type paymentService struct {
-	userRepo repository.UserRepository
-	planRepo repository.PlanRepository
-	txRepo   repository.TransactionRepository
+	userRepo      repository.UserRepository
+	planRepo      repository.PlanRepository
+	txRepo        repository.TransactionRepository
+	consultanRepo repository.ConsultanRepository
 }
 
-func NewPaymentService(userRepo repository.UserRepository, planRepo repository.PlanRepository, txRepo repository.TransactionRepository) PaymentService {
+func NewPaymentService(userRepo repository.UserRepository, planRepo repository.PlanRepository, txRepo repository.TransactionRepository, consultanRepo repository.ConsultanRepository) PaymentService {
 	return &paymentService{
-		userRepo: userRepo,
-		planRepo: planRepo,
-		txRepo:   txRepo,
+		userRepo:      userRepo,
+		planRepo:      planRepo,
+		txRepo:        txRepo,
+		consultanRepo: consultanRepo,
 	}
 }
 
@@ -81,10 +86,21 @@ func (s *paymentService) HandleMidtransCallback(payload map[string]interface{}) 
 	}
 
 	parts := strings.Split(rawOrderID, "-")
-	if len(parts) < 4 || parts[0] != "PREMIUM" {
-		return errors.New("invalid order_id format")
+	if len(parts) < 4 {
+		return fmt.Errorf("invalid order_id format: %s", rawOrderID)
 	}
 
+	switch parts[0] {
+	case "PREMIUM":
+		return s.handlePremiumPayment(parts, rawOrderID, status, grossAmountStr)
+	case "CONSULTAN":
+		return s.handleConsultationPayment(parts, rawOrderID, status, grossAmountStr)
+	default:
+		return fmt.Errorf("unknown order prefix: %s", parts[0])
+	}
+}
+
+func (s *paymentService) handlePremiumPayment(parts []string, rawOrderID, status, grossAmountStr string) error {
 	var (
 		planID uint
 		userID uint
@@ -103,8 +119,8 @@ func (s *paymentService) HandleMidtransCallback(payload map[string]interface{}) 
 		return fmt.Errorf("plan not found: %v", err)
 	}
 
-	var grossAmount int64
-	fmt.Sscanf(grossAmountStr, "%d", &grossAmount)
+	var grossAmount float64
+	fmt.Sscanf(grossAmountStr, "%f", &grossAmount)
 
 	expiredAt := time.Now().AddDate(0, 0, plan.Duration)
 	err = s.userRepo.SetPremiumWithDuration(userID, expiredAt)
@@ -114,11 +130,11 @@ func (s *paymentService) HandleMidtransCallback(payload map[string]interface{}) 
 
 	transaction := &models.Transaction{
 		UserID:    userID,
-		PlanID:    planID,
+		PlanID:    &planID,
 		OrderID:   rawOrderID,
-		Amount:    grossAmount,
+		Amount:    int64(grossAmount),
 		Status:    status,
-		ExpiredAt: expiredAt,
+		ExpiredAt: &expiredAt,
 		CreatedAt: time.Now(),
 	}
 	if err := s.txRepo.Create(transaction); err != nil {
@@ -129,10 +145,75 @@ func (s *paymentService) HandleMidtransCallback(payload map[string]interface{}) 
 	return nil
 }
 
+func (s *paymentService) handleConsultationPayment(parts []string, rawOrderID, status, grossAmountStr string) error {
+	var (
+		consultanID uint
+		userID      uint
+	)
+	_, err := fmt.Sscanf(parts[1], "%d", &consultanID)
+	if err != nil {
+		return fmt.Errorf("failed to parse consultanID: %v", err)
+	}
+	_, err = fmt.Sscanf(parts[2], "%d", &userID)
+	if err != nil {
+		return fmt.Errorf("failed to parse userID: %v", err)
+	}
+
+	var grossAmount float64
+	fmt.Sscanf(grossAmountStr, "%f", &grossAmount)
+
+	transaction := &models.Transaction{
+		UserID:      userID,
+		ConsultanID: &consultanID,
+		OrderID:     rawOrderID,
+		Amount:      int64(grossAmount),
+		Status:      status,
+		CreatedAt:   time.Now(),
+	}
+	if err := s.txRepo.Create(transaction); err != nil {
+		log.Println("Gagal menyimpan transaksi konsultasi:", err)
+	}
+
+	err = s.consultanRepo.CreateAccess(userID, consultanID)
+	if err != nil {
+		log.Println("Gagal memberikan akses konsultasi:", err)
+		return err
+	}
+
+	log.Printf("[Midtrans Callback] Consultation access granted: user=%d consultan=%d\n", userID, consultanID)
+	return nil
+}
+
 func (s *paymentService) GetUserTransactions(userID uint) ([]models.Transaction, error) {
 	return s.txRepo.FindByUserID(userID)
 }
 
 func (s *paymentService) GetAllTransactions() ([]models.Transaction, error) {
 	return s.txRepo.FindAll()
+}
+
+func (s *paymentService) GenerateSnapTokenForConsultan(userID uint, consultanID uint) (string, string, error) {
+	user, err := s.userRepo.FindByID(userID)
+	if err != nil {
+		return "", "", err
+	}
+
+	consultan, err := s.consultanRepo.FindByID(consultanID)
+	if err != nil {
+		return "", "", err
+	}
+
+	harga := int64(consultan.Price)
+	orderID := fmt.Sprintf("CONSULTAN-%d-%d-%d", consultanID, user.ID, time.Now().Unix())
+
+	token, redirectURL, err := midtrans.CreateSnapTransaction(orderID, user.ID, harga, user.Name, user.Email)
+	if err != nil {
+		return "", "", err
+	}
+
+	return token, redirectURL, nil
+}
+
+func (s *paymentService) UpdateTransactionStatus(orderID string, status string) error {
+	return s.txRepo.UpdateTransactionStatus(orderID, status)
 }
