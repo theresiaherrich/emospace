@@ -1,26 +1,30 @@
+import { useEffect, useState } from 'react';
+import { type APIPremiumPlan, type PremiumDetails } from '../types/type';
+import { mapPlansToPremiumDetails } from '../../../utils/premium';
 import PremiumCard from '../components/premiumcard';
-import { premiumDetails } from '../types/type';
 import { useNavigate } from 'react-router-dom';
-import ConfirmModal from '../../../components/ui/confirmModal'; 
-import { useState } from 'react';
-
-interface PremiumDetails {
-    id: number;
-    premiumType?: "Monthly" | "Quarterly" | "Annual";
-    value?: string;
-    price?: string;
-    period?: string;
-    description?: string;
-    variant?: "primary" | "secondary";
-    paymentType?: "premium";
-}
+import ConfirmModal from '../../../components/ui/confirmModal';
 
 const PremiumContainer = () => {
-    const premium: PremiumDetails[] = premiumDetails;
-    const navigate = useNavigate();
+    const [premiumPlans, setPremiumPlans] = useState<PremiumDetails[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPremium, setSelectedPremium] = useState<PremiumDetails | null>(null);
+    const navigate = useNavigate();
 
+    useEffect(() => {
+        const fetchPlans = async () => {
+            try {
+                const res = await fetch('/api/plans');
+                const data: APIPremiumPlan[] = await res.json();
+                const mapped = mapPlansToPremiumDetails(data);
+                setPremiumPlans(mapped);
+            } catch (error) {
+                console.error('Failed to fetch premium plans:', error);
+            }
+        };
+
+        fetchPlans();
+    }, []);
 
     const handleUpgradeClick = (item: PremiumDetails) => {
         setSelectedPremium(item);
@@ -61,17 +65,17 @@ const PremiumContainer = () => {
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-8 md:gap-12 mb-12 items-center justify-center">
-                    {premium.map((item) => (
-                    <PremiumCard
-                        key={item.id}
-                        variant={item.premiumType === "Quarterly" ? "primary" : "secondary"}
-                        premiumType={item.premiumType}
-                        value={item.value}
-                        price={item.price}
-                        period={item.period}
-                        description={item.description}
-                        onClick={() => handleUpgradeClick(item)}
-                    />
+                    {premiumPlans.map((item) => (
+                        <PremiumCard
+                            key={item.id}
+                            variant={item.id % 2 === 0 ? "primary" : "secondary"}
+                            premiumType={item.premiumType}
+                            value={item.value}
+                            price={item.price}
+                            period={item.period}
+                            description={item.description}
+                            onClick={() => handleUpgradeClick(item)}
+                        />
                     ))}
                 </div>
 
