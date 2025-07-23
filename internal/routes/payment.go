@@ -21,5 +21,5 @@ func RegisterPaymentRoutes(rg *gin.RouterGroup, paymentHandler *handler.PaymentH
 		}
 	}
 
-	rg.POST("/payment/callback", paymentHandler.HandleMidtransCallback)
+	rg.POST("/payment/callback", paymentHandler.PaymentCallback)
 }
