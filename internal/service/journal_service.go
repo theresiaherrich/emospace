@@ -91,7 +91,7 @@ func (s *journalService) UpdateJournal(userID, journalID uint, req dto.CreateJou
 
 	if req.Image != nil {
 		if j.ImageURL != "" {
-			_ = supabase.DeleteImageFromSupabase(j.ImageURL) // aman walau gagal
+			_ = supabase.DeleteImageFromSupabase(j.ImageURL) 
 		}
 		newURL, err := supabase.UploadJournalImage(req.Image, userID)
 		if err != nil {

@@ -54,6 +54,10 @@ func SetupRoutes() *gin.Engine {
 	journalService := service.NewJournalService(journalRepo)
 	journalHandler := handler.NewJournalHandler(journalService)
 
+	consultanRepo := repository.NewConsultanRepository(db)
+	consultanService := service.NewConsultanService(consultanRepo)
+	consultanHandler := handler.NewConsultanHandler(consultanService)
+
 	api := r.Group("/api")
 	RegisterAuthRoutes(api, authHandler)
 	RegisterMoodRoutes(api, moodHandler)
@@ -63,6 +67,7 @@ func SetupRoutes() *gin.Engine {
 	RegisterUserRoutes(api, userHandler)
 	RegisterAdminRoutes(api, userHandler)
 	RegisterJournalRoutes(api, journalHandler)
+	RegisterConsultanRoutes(api, consultanHandler)
 
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "EmoSpace backend is running 🚀"})
