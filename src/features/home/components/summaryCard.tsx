@@ -29,7 +29,7 @@ const SummaryCard = () => {
                     <img className="h-6 w-6" src="/assets/crown 1.svg" alt="" />
                     <h1 className="text-xl font-bold text-left">Summary</h1>
                 </div>
-                  <a href="#" className="text-xs font-medium text-[#9F53FF]">View all</a>
+                  <a href={isPremium ? "/summary" : "/premium"} className="text-xs font-medium text-[#9F53FF]">View all</a>
             </div>
             {isPremium ? (
                 <div className="flex flex-col items-center justify-center py-2 px-3">

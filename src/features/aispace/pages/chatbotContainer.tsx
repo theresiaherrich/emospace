@@ -21,6 +21,7 @@ const ChatbotContainer = () => {
   const formatDate = (iso?: string) => {
     if (!iso) return '';
     return new Date(iso).toLocaleDateString('en-US', {
+      timeZone: 'Asia/Jakarta',
       month: 'long',
       day: 'numeric',
       year: 'numeric',
@@ -38,8 +39,12 @@ const ChatbotContainer = () => {
 
       <div className="flex-1 justify-center items-center h-full overflow-y-auto px-4 sm:px-10 lg:px-24 py-6 space-y-4 font-spartan text-sm scroll-smooth">
         {chatLog.map((chat, index) => {
-          const currentDate = chat.date?.split("T")[0];
-          const prevDate = chatLog[index - 1]?.date?.split("T")[0];
+          const currentDate = new Date(chat.date ?? "").toLocaleDateString('en-CA', {
+            timeZone: 'Asia/Jakarta',
+          });
+          const prevDate = new Date(chatLog[index - 1]?.date ?? "").toLocaleDateString('en-CA', {
+            timeZone: 'Asia/Jakarta',
+          });
           const showDate = currentDate && currentDate !== prevDate;
 
           return (
