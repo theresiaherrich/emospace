@@ -65,7 +65,7 @@ const UserProfileCard = ({ profile }: UserProfileCardProps) => {
         <div className="relative z-10 -mt-20 flex flex-col items-center">
           <img src={ profile?.profile_picture || "/assets/photo-profil.svg"} alt="user" className="w-24 h-24 sm:w-28 sm:h-28 bg-[#E9DDF4] rounded-full items-center object-cover"/>
           {profile?.is_premium && (
-            <img src="/assets/crown-prem.svg" alt="Premium" className="absolute -top-6 right-[33%] sm:right-[38%] w-10 h-10 sm:w-12 sm:h-12"/>
+            <img src="/assets/crown-prem.svg" alt="Premium" className="absolute -top-6 right-[35%] sm:right-[42%] w-10 h-10 sm:w-12 sm:h-12"/>
           )}
         </div>
       </div>

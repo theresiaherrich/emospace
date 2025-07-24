@@ -1,11 +1,12 @@
 import Card from "../../../components/ui/card";
-import { isUserPremium } from "../../../utils/user";
 import { useEffect, useState } from "react";
 import { getSummaryMood } from "../../../services/moodservice";
 import { format } from "date-fns";
+import { useUser } from "../../../context/usercontext";
 
 const SummaryCard = () => {
-    const isPremium = isUserPremium();
+    const { user } = useUser(); 
+    const isPremium = user?.is_premium ?? false;
     const [summary, setSummary] = useState("");
 
     useEffect(() => {
