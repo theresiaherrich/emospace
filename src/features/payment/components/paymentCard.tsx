@@ -2,9 +2,12 @@ import { CalendarIcon, XIcon, Clock } from "lucide-react";
 import PaymentDetailCard from "./totalpaymentCard";
 import { useState, useEffect } from "react";
 import { format, addMonths } from "date-fns";
-import { useLocation } from "react-router-dom";
-import { getPaymentPremium, getPaymentSpecialist, postCallbackPayment } from "../../../services/paymentservice";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  getPaymentPremium,
+  getPaymentSpecialist,
+  postCallbackPayment,
+} from "../../../services/paymentservice";
 
 declare global {
   interface Window {
@@ -24,6 +27,7 @@ const PaymentCard = () => {
 
   const [loading, setLoading] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
+  const [showSnapOnly, setShowSnapOnly] = useState(false);
 
   const navigate = useNavigate();
 
@@ -40,7 +44,6 @@ const PaymentCard = () => {
   const handlePayment = async () => {
     if (!id || isNaN(id)) {
       alert("ID pembayaran tidak ditemukan!");
-      console.error("Invalid or undefined ID:", id);
       return;
     }
 
@@ -53,9 +56,9 @@ const PaymentCard = () => {
 
       const snapToken = response.token;
 
-      if (!snapToken) {
-        throw new Error("Snap token kosong");
-      }
+      if (!snapToken) throw new Error("Snap token kosong");
+
+      setShowSnapOnly(true);
 
       window.snap.pay(snapToken, {
         onSuccess: async (result: any) => {
@@ -68,27 +71,25 @@ const PaymentCard = () => {
             alert("Pembayaran berhasil!");
             navigate("/");
           } catch (err) {
-            console.error("Callback error:", err);
-            alert("Pembayaran berhasil, tapi gagal mengirim callback ke server.");
+            alert("Pembayaran berhasil, tapi callback gagal.");
           }
-          navigate("/");
         },
         onPending: () => {
           alert("Pembayaran menunggu.");
           navigate("/");
         },
         onError: (err: any) => {
-          console.error("Error:", err);
           alert("Pembayaran gagal.");
+          console.error("Snap error:", err);
         },
         onClose: () => {
-          console.log("Snap modal ditutup.");
-          navigate("/");
+          console.log("Modal ditutup.");
+          setShowSnapOnly(false);
         },
       });
     } catch (err) {
-      console.error("Gagal memulai pembayaran:", err);
-      alert("Gagal memulai pembayaran");
+      alert("Gagal memulai pembayaran.");
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -109,6 +110,10 @@ const PaymentCard = () => {
     endDate,
     "d MMMM yyyy"
   )}`;
+
+  if (showSnapOnly) {
+    return <div className="fixed inset-0 bg-home bg-center z-[9999]" />;
+  }
 
   return (
     <div className="rounded-3xl shadow-[5px_5px_10px_0px_#00000040] h-auto mt-20 mb-12 relative">
