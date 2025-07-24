@@ -37,7 +37,18 @@ func (h *JournalHandler) CreateJournal(c *gin.Context) {
 
 
 func (h *JournalHandler) GetJournals(c *gin.Context) {
-	userID := c.GetUint("user_id") 
+	userID := c.GetUint("user_id")
+
+	journals, err := h.Service.GetJournals(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch journals"})
+		return
+	}
+	c.JSON(http.StatusOK, journals)
+}
+
+func (h *JournalHandler) GetMyJournals(c *gin.Context) {
+	userID := c.GetUint("user_id")
 	if userID == 0 {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user token"})
 		return
@@ -50,7 +61,6 @@ func (h *JournalHandler) GetJournals(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, journals)
 }
-
 
 func (h *JournalHandler) GetJournalDetail(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))

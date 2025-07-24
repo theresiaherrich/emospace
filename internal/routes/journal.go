@@ -10,6 +10,7 @@ func RegisterJournalRoutes(r *gin.RouterGroup, h *handler.JournalHandler) {
 	{
 		journal.POST("/", h.CreateJournal)
 		journal.GET("/", h.GetJournals)
+		journal.GET("/me", h.GetMyJournals)
 		journal.GET("/:id", h.GetJournalDetail)
 		journal.PUT("/:id", h.UpdateJournal)
 		journal.DELETE("/:id", h.DeleteJournal)
