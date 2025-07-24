@@ -4,6 +4,7 @@ import { mapPlansToPremiumDetails } from '../../../utils/premium';
 import PremiumCard from '../components/premiumcard';
 import { useNavigate } from 'react-router-dom';
 import ConfirmModal from '../../../components/ui/confirmModal';
+import { getPremium } from '../../../services/premiumservice';
 
 const PremiumContainer = () => {
     const [premiumPlans, setPremiumPlans] = useState<PremiumDetails[]>([]);
@@ -14,8 +15,7 @@ const PremiumContainer = () => {
     useEffect(() => {
         const fetchPlans = async () => {
             try {
-                const res = await fetch('/api/plans');
-                const data: APIPremiumPlan[] = await res.json();
+                const data: APIPremiumPlan[] = await getPremium();
                 const mapped = mapPlansToPremiumDetails(data);
                 setPremiumPlans(mapped);
             } catch (error) {
@@ -35,6 +35,7 @@ const PremiumContainer = () => {
         if (selectedPremium) {
             navigate('/payment', { 
                 state: { 
+                    id: selectedPremium.id,
                     paymentType: 'premium', 
                     premiumType: selectedPremium.premiumType, 
                     period: selectedPremium.period,

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 interface PaymentDetailCardProps {
-  orderId: string;
+  orderId: string | number;
   price: number;
 }
 
