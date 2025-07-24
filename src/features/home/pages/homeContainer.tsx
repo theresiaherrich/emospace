@@ -10,12 +10,31 @@ import Card from "../../../components/ui/card";
 import Button from "../../../components/ui/button";
 import SummaryCard from "../components/summaryCard";
 import { postMood, getMonthlyMood } from "../../../services/moodservice";
+import { type JournalAPI } from "../../myjournal/types/type";
+import { getJournal } from "../../../services/journalservice";
 
 const isValidMood = (m: any): m is MoodType => Object.keys(moodColors).includes(m);
 
 const HomeContainer: React.FC = () => {
   const [moodData, setMoodData] = useState<MoodMap>({});
   const navigate = useNavigate();
+  const [journals, setJournals] = useState<JournalAPI[]>([]);
+
+  useEffect(() => {
+    const fetchJournals = async () => {
+      try {
+        const res = await getJournal();
+        const sorted = res
+          .sort((a : JournalAPI, b : JournalAPI) => new Date(b.date).getTime() - new Date(a.date).getTime())
+          .slice(0, 3);
+        setJournals(sorted);
+      } catch (err) {
+        console.error("Failed to fetch journals:", err);
+      }
+    };
+
+    fetchJournals();
+  }, []);
 
   useEffect(() => {
     const fetchMoods = async () => {
@@ -97,25 +116,21 @@ const HomeContainer: React.FC = () => {
 
           <div className="flex flex-col-reverse xl:flex-row gap-10 justify-center w-full">
             <div className="flex flex-col xl:flex-row gap-8 items-center justify-center">
-              {["#E7DCF0", "#E2D2EF", "#DCCBEB"].map((color, idx) => (
+              {journals.map((journal, idx) => (
                 <Card
-                  key={idx}
+                  key={journal.id}
                   className="flex flex-col gap-5 pt-10 pb-9 px-6 items-center rounded-[150px] h-[510px] w-full max-w-[234px] shadow-[5px_5px_20px_0px_#00000040]"
-                  style={{ backgroundColor: color }}
+                  style={{ backgroundColor: ["#E7DCF0", "#E2D2EF", "#DCCBEB"][idx % 3] }}
                 >
                   <img src="/assets/bintang-ungu.svg" alt="" className="h-10 w-10" />
                   <div className="flex flex-col items-center">
-                    <h1 className="text-xl text-center font-bold">
-                      Malam Minggu dan Tumpukan Tugas
-                    </h1>
-                    <p className="text-sm font-semibold text-[#969696]">28/06/2025</p>
+                    <h1 className="text-xl text-center font-bold line-clamp-2">{journal.title}</h1>
+                    <p className="text-sm font-semibold text-[#969696]">
+                      {new Date(journal.date).toLocaleDateString("en-GB")}
+                    </p>
                   </div>
-                  <div className="text-sm md:text-base/5 font-medium text-center font-spartan text-[#1C1C1C] text-opacity-80">
-                    Sabtu malam di Malang, tapi aku lagi di kosan, bukan di kafe. Deadline tugas
-                    Makroekonomi udah mepet banget, rasanya kepala mau pecah. Materi kuliah numpuk,
-                    harus nyari jurnal juga, bikin mata perih. <br />
-                    <br />
-                    Tadi sempat bikin kopi instan dingin biar melek tapi malah kembung...
+                  <div className="text-sm md:text-base/5 font-medium text-center font-spartan text-[#1C1C1C] text-opacity-80 line-clamp-[8]">
+                    {journal.content}
                   </div>
                 </Card>
               ))}
