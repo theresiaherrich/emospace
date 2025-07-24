@@ -12,9 +12,10 @@ func RegisterJournalRoutes(r *gin.RouterGroup, h *handler.JournalHandler) {
 	journal.Use(middleware.JWTMiddleware())
 	{
 		journal.POST("/", h.CreateJournal)
-		journal.GET("/", h.GetJournals)
-		journal.GET("/:id", h.GetJournalDetail)
+		journal.GET("/", h.GetJournalDetail)
 		journal.PUT("/:id", h.UpdateJournal)
 		journal.DELETE("/:id", h.DeleteJournal)
+
+		journal.GET("/all", middleware.RequireRole("admin"), h.GetJournals)
 	}
 }
