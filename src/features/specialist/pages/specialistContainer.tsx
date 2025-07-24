@@ -23,6 +23,7 @@ const SpecialistContainer: React.FC = () => {
     if (selectedSpecialist) {
       navigate("/payment", {
         state: {
+          id: selectedSpecialist.id,
           paymentType: "consultation",
           price: selectedSpecialist.price,
         },
