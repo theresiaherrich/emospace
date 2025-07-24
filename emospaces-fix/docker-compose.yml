@@ -1,0 +1,42 @@
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: emospaces_app
+    ports:
+      - "8081:8080"
+    env_file:
+      - .env
+    depends_on:
+      emospaces_db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - emonet
+
+  emospaces_db:
+    image: mysql:5.7
+    container_name: emospaces_db
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: emospaces
+      MYSQL_ALLOW_EMPTY_PASSWORD: "no"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - emonet
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  mysql_data:
+
+networks:
+  emonet:
+    driver: bridge
