@@ -66,6 +66,7 @@ const PaymentCard = () => {
             });
             setIsPaid(true);
             alert("Pembayaran berhasil!");
+            navigate("/");
           } catch (err) {
             console.error("Callback error:", err);
             alert("Pembayaran berhasil, tapi gagal mengirim callback ke server.");
@@ -73,6 +74,7 @@ const PaymentCard = () => {
         },
         onPending: () => {
           alert("Pembayaran menunggu.");
+          navigate("/");
         },
         onError: (err: any) => {
           console.error("Error:", err);
