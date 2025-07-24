@@ -47,7 +47,7 @@ const HomeContainer: React.FC = () => {
     const date = formatInTimeZone(new Date(), 'Asia/Jakarta', 'yyyy-MM-dd');
     const color = moodColors[mood_code];
     try {
-      await postMood({ date, mood_code, color });
+      await postMood({ mood_code });
       setMoodData((prev) => ({
         ...prev,
         [date]: { mood_code, color },

@@ -5,7 +5,7 @@ export const getJournal = async () => {
     const token = getToken();
     if (!token) throw new Error("User is not authenticated");
 
-    const res = await api.get("/journals", {
+    const res = await api.get("/journals/", {
         headers: {
             Authorization: `Bearer ${token}`
         }
@@ -18,7 +18,7 @@ export const postJournal = async (formData: FormData) => {
     const token = getToken();
     if (!token) throw new Error("User is not authenticated");
 
-    const res = await api.post("/journals", formData, {
+    const res = await api.post("/journals/", formData, {
         headers: {
             Authorization: `Bearer ${token}`
         },

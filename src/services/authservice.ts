@@ -1,4 +1,5 @@
 import api from "../lib/axios";
+import Cookies from "js-cookie";
 
 export const login = async (
   identifier: string,
@@ -10,6 +11,16 @@ export const login = async (
     password,
     remember_me: rememberMe,
   });
+
+  const token = res.data?.token;
+
+  if (token) {
+    Cookies.set("token", token, {
+      expires: rememberMe ? 7 : undefined,
+      secure: true,
+      sameSite: "Strict",
+    });
+  }
 
   return res.data;
 };

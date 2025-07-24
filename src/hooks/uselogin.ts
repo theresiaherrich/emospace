@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { login } from "../services/authservice";
-import Cookies from "js-cookie";
 
 export const useLogin = () => {
   const [error, setError] = useState("");
@@ -11,8 +10,7 @@ export const useLogin = () => {
     setError("");
 
     try {
-      const { token, message } = await login(identifier, password, rememberMe);
-      Cookies.set("token", token, { expires: 7 });
+      const { message } = await login(identifier, password, rememberMe);
       return message;
     } catch (err: any) {
       const msg = err.response?.data?.message || "Login gagal";

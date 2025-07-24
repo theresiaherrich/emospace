@@ -37,12 +37,6 @@ const DetailJournalContainer = () => {
     fetchData();
   }, [id]);
 
-  useEffect(() => {
-    if (!journal && id !== "new") {
-      console.log(Error);
-    }
-  }, [journal, id, navigate]);
-
   const handleSave = async () => {
     if (!title || !content) return;
 

@@ -3,15 +3,13 @@ import { getToken } from "../utils/auth";
 import { type MoodType } from "../features/home/types/type";
 
 interface MoodPayload {
-    date: string;
     mood_code: MoodType;
-    color: string;
 }
 
 export const postMood = async (payload: MoodPayload) => {
   const token = getToken();
 
-  const res = await api.post(`/mood`, payload, {
+  const res = await api.post(`/mood/`, payload, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
