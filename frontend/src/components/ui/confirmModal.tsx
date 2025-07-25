@@ -31,10 +31,10 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, amount, message }: ConfirmMo
 
         <div className="flex justify-center items-center gap-3">
           <Button variant="secondary" onClick={onClose} className="py-1 px-4">
-            Kembali
+            Cancel
           </Button>
           <Button variant="secondary" onClick={onConfirm} className="py-1 px-4">
-            Lanjutkan
+            Continue
           </Button>
         </div>
       </div>

@@ -6,7 +6,9 @@ import { getUserProfile } from "../services/userservice";
 export const useLogin = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { setUser } = useUser();
+  const { setUser, triggerRefresh } = useUser();
+
+  
 
   const handleLogin = async (identifier: string, password: string, rememberMe = true) => {
     setLoading(true);
@@ -17,7 +19,7 @@ export const useLogin = () => {
       
       const profile = await getUserProfile();
       setUser(profile);
-
+      triggerRefresh();
       return message;
     } catch (err: any) {
       const msg = err.response?.data?.message || "Login gagal";

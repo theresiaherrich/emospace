@@ -43,7 +43,7 @@ const PaymentCard = () => {
 
   const handlePayment = async () => {
     if (!id || isNaN(id)) {
-      alert("ID pembayaran tidak ditemukan!");
+      alert("Invalid payment ID.");
       return;
     }
 
@@ -68,27 +68,26 @@ const PaymentCard = () => {
               transaction_status: result.transaction_status,
             });
             setIsPaid(true);
-            alert("Pembayaran berhasil!");
+            alert("Payment successful!");
             navigate("/");
           } catch (err) {
-            alert("Pembayaran berhasil, tapi callback gagal.");
+            alert("Payment successful, but callback failed.");
           }
         },
         onPending: () => {
-          alert("Pembayaran menunggu.");
+          alert("Payment pending.");
           navigate("/");
         },
         onError: (err: any) => {
-          alert("Pembayaran gagal.");
+          alert("Payment failed.");
           console.error("Snap error:", err);
         },
         onClose: () => {
-          console.log("Modal ditutup.");
           setShowSnapOnly(false);
         },
       });
     } catch (err) {
-      alert("Gagal memulai pembayaran.");
+      alert("Failed to initiate payment.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -171,7 +170,7 @@ const PaymentCard = () => {
               : "bg-[#633796] hover:bg-[#4f2b74]"
           }`}
         >
-          {isPaid ? "Pembayaran Berhasil" : loading ? "Memproses..." : "Bayar Sekarang"}
+          {isPaid ? "Payment Successful" : loading ? "Loading..." : "Pay Now"}
         </button>
       </div>
     </div>

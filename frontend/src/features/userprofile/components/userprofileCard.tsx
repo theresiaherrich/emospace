@@ -5,13 +5,13 @@ import {
   MessageSquareQuote,
   LockKeyhole,
   SquareGanttChart,
-  Languages,
   LogOut
 } from "lucide-react";
 import MenuItem from "../components/menuitem";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { logout } from "../../../utils/auth";
+import { useUser } from "../../../context/usercontext";
 
 interface UserProfileCardProps {
   profile: {
@@ -26,14 +26,10 @@ interface UserProfileCardProps {
 const UserProfileCard = ({ profile }: UserProfileCardProps) => {
   const navigate = useNavigate();
   const [notificationsOn, setNotificationsOn] = useState(true);
-  const [language, setLanguage] = useState("English");
+  const { setUser } = useUser();
 
   const handleToggleNotifications = () => {
     setNotificationsOn(!notificationsOn);
-  };
-
-  const handleToggleLanguage = () => {
-    setLanguage(language === "English" ? "Bahasa Indonesia" : "English");
   };
 
   const handlePremiumClick = () => {
@@ -44,6 +40,7 @@ const UserProfileCard = ({ profile }: UserProfileCardProps) => {
 
   const handleLogout = () => {
     logout();
+    setUser(null);
     navigate("/");
   }
 
@@ -82,9 +79,6 @@ const UserProfileCard = ({ profile }: UserProfileCardProps) => {
           </MenuItem>
           <MenuItem label="Notifications" value={notificationsOn ? "ON" : "OFF"} onClick={handleToggleNotifications}>
             <Bell className="text-white h-4 w-4" />
-          </MenuItem>
-          <MenuItem label="Language" value={language} onClick={handleToggleLanguage}>
-            <Languages className="text-white h-4 w-4" />
           </MenuItem>
         </div>
 

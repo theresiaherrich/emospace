@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { postAISpace, getWelcomeSpace, getHistoryChat } from '../../../services/aispaceservice';
 import { useChatSearch } from '../../../hooks/use-chatsearch';
 import { type ChatEntry, type ChatHistoryResponse } from '../../../types/chat';
-import { formatInTimeZone } from 'date-fns-tz';
 
 export const useAIChat = () => {
   const [message, setMessage] = useState('');
@@ -10,6 +9,7 @@ export const useAIChat = () => {
   const [chatLog, setChatLog] = useState<ChatEntry[]>([]);
   const [isBotTyping, setBotTyping] = useState(false);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const hasWelcomedRef = useRef(false);
 
   const {
     matchRefs,
@@ -20,35 +20,45 @@ export const useAIChat = () => {
   } = useChatSearch(chatLog, searchTerm);
 
   const fetchHistory = async () => {
+    if (hasWelcomedRef.current) return;
+    hasWelcomedRef.current = true;
+
     try {
       const data = await getHistoryChat();
-      const formatted: ChatEntry[] = data
-        .flatMap((item: ChatHistoryResponse): ChatEntry[] => [
-          { from: 'user', text: item.user_input, date: item.created_at },
-          { from: 'bot', text: item.ai_output.replace(/^Space:\s*/, ''), date: item.created_at }
-        ])
-        .sort((a: ChatEntry, b: ChatEntry) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      const rawData = Array.isArray(data) ? data : [];
 
-      const today = formatInTimeZone(new Date(), 'Asia/Jakarta', 'yyyy-MM-dd');
-      const hasTodayMessage = formatted.some(item => {
-        const itemDate = formatInTimeZone(new Date(item.date), 'Asia/Jakarta', 'yyyy-MM-dd');
-        return itemDate === today;
-      });
+      const formatted: ChatEntry[] = rawData.length > 0
+        ? rawData
+            .flatMap((item: ChatHistoryResponse): ChatEntry[] => [
+              { from: 'user', text: item.user_input, date: item.created_at },
+              { from: 'bot', text: item.ai_output.replace(/^Space:\s*/, ''), date: item.created_at }
+            ])
+            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        : [];
 
-      if (!hasTodayMessage) {
+      const welcome = await getWelcomeSpace();
+      const welcomeMsg: ChatEntry = {
+        from: 'bot',
+        text: welcome.response.replace(/^Space:\s*/, ''),
+        date: new Date().toISOString()
+      };
+
+      setChatLog([...formatted, welcomeMsg]);
+    } catch (err) {
+      console.error("Failed to fetch chat history or welcome:", err);
+
+      try {
         const welcome = await getWelcomeSpace();
-        const welcomeMsg = {
+        const welcomeMsg: ChatEntry = {
           from: 'bot',
           text: welcome.response.replace(/^Space:\s*/, ''),
           date: new Date().toISOString()
         };
-        setChatLog([...formatted, welcomeMsg]);
-      } else {
-        setChatLog(formatted);
+        setChatLog([welcomeMsg]);
+      } catch (welcomeErr) {
+        console.error("Also failed to fetch welcome message:", welcomeErr);
+        setChatLog([]);
       }
-    } catch (err) {
-      console.error("Failed to fetch chat history:", err);
-      setChatLog([]);
     }
   };
 

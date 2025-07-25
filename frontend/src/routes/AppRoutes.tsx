@@ -32,7 +32,7 @@ const AppRoutes = () => {
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/aispace" element={<AISpace />} />
-          <Route path="/specialist" element={<SpecialistPage />} />
+          <Route path="/specialist" element={<AuthMiddleware><SpecialistPage /></AuthMiddleware>} />
           <Route path="/my-journal" element={<MyjournalPage />} />
           <Route path="/my-journal/detail/:id" element={<AuthMiddleware><DetailJournalPage /></AuthMiddleware>} />
           <Route path="/premium" element={<AuthMiddleware><PremiumPage /></AuthMiddleware>} />

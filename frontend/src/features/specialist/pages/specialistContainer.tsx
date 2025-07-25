@@ -122,7 +122,7 @@ const SpecialistContainer: React.FC = () => {
           onClose={() => setIsModalOpen(false)}
           onConfirm={handleConfirm}
           amount={selectedSpecialist.price}
-          message={`Lanjutkan pembayaran sebesar`}
+          message={`Continue payment amount`}
         />
       )}
     </div>
