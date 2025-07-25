@@ -5,12 +5,19 @@ import { getUserProfile } from "../services/userservice";
 interface UserContextType {
   user: UserProfile | null;
   setUser: (user: UserProfile | null) => void;
+  refreshKey: number;
+  triggerRefresh: () => void
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const triggerRefresh = () => {
+    setRefreshKey((prev) => prev + 1);
+  }
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -27,7 +34,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, refreshKey, triggerRefresh }}>
       {children}
     </UserContext.Provider>
   );

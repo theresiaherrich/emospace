@@ -4,66 +4,69 @@ import DateCard from "../components/dateCard";
 import MoodCard from "../components/moodCard";
 import MindToTellCard from "../components/mindtellCard";
 import CalendarMood from "../components/moodCalendar";
-import { type MoodType, type MoodMap, moodColors } from "../types/type";
-import { formatInTimeZone } from "date-fns-tz";
+import SummaryCard from "../components/summaryCard";
 import Card from "../../../components/ui/card";
 import Button from "../../../components/ui/button";
-import SummaryCard from "../components/summaryCard";
+import { formatInTimeZone } from "date-fns-tz";
 import { postMood, getMonthlyMood } from "../../../services/moodservice";
-import { type JournalAPI } from "../../myjournal/types/type";
 import { getJournal } from "../../../services/journalservice";
+import { useUser } from "../../../context/usercontext";
+import { type MoodType, type MoodMap, moodColors } from "../types/type";
+import { type JournalAPI } from "../../myjournal/types/type";
 
 const isValidMood = (m: any): m is MoodType => Object.keys(moodColors).includes(m);
 
 const HomeContainer: React.FC = () => {
   const [moodData, setMoodData] = useState<MoodMap>({});
-  const navigate = useNavigate();
   const [journals, setJournals] = useState<JournalAPI[]>([]);
+  const navigate = useNavigate();
+  const { user, refreshKey } = useUser();
 
-  useEffect(() => {
-    const fetchJournals = async () => {
-      try {
-        const res = await getJournal();
-        const sorted = res
-          .sort((a : JournalAPI, b : JournalAPI) => new Date(b.date).getTime() - new Date(a.date).getTime())
-          .slice(0, 3);
-        setJournals(sorted);
-      } catch (err) {
-        console.error("Failed to fetch journals:", err);
-      }
-    };
-
-    fetchJournals();
-  }, []);
-
-  useEffect(() => {
-    const fetchMoods = async () => {
-      const month = formatInTimeZone(new Date(), 'Asia/Jakarta', 'yyyy-MM');
-      try {
-        const res = await getMonthlyMood(month);
-        const moodMap: MoodMap = {};
-
-        for (const item of res) {
-          const { date, mood_code } = item;
-          if (date && isValidMood(mood_code)) {
-            moodMap[date] = {
-              mood_code,
-              color: moodColors[mood_code],
-            };
-          }
+  const fetchMoodData = async () => {
+    const month = formatInTimeZone(new Date(), "Asia/Jakarta", "yyyy-MM");
+    try {
+      const res = await getMonthlyMood(month);
+      const moodMap: MoodMap = {};
+      for (const item of res) {
+        const { date, mood_code } = item;
+        if (date && isValidMood(mood_code)) {
+          moodMap[date] = {
+            mood_code,
+            color: moodColors[mood_code],
+          };
         }
-
-        setMoodData(moodMap);
-      } catch (err) {
-        console.error("Failed to fetch moods:", err);
       }
-    };
+      setMoodData(moodMap);
+    } catch (err) {
+      console.error("Failed to fetch moods:", err);
+    }
+  };
 
-    fetchMoods();
+  const fetchJournalData = async () => {
+    try {
+      const res = await getJournal();
+      const sorted = res
+        .sort((a: JournalAPI, b: JournalAPI) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 3);
+      setJournals(sorted);
+    } catch (err) {
+      console.error("Failed to fetch journals:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchMoodData();
+    fetchJournalData();
   }, []);
+
+  useEffect(() => {
+    if (refreshKey === 0) return;
+    fetchMoodData();
+    fetchJournalData();
+  }, [refreshKey]);
 
   const handleMoodSelect = async (mood_code: MoodType) => {
-    const date = formatInTimeZone(new Date(), 'Asia/Jakarta', 'yyyy-MM-dd');
+    const date = formatInTimeZone(new Date(), "Asia/Jakarta", "yyyy-MM-dd");
     const color = moodColors[mood_code];
     try {
       await postMood({ mood_code });
@@ -95,7 +98,7 @@ const HomeContainer: React.FC = () => {
               className="absolute top-[90px] left-[10%] sm:left-[10%] md:left-[25%] lg:left-[440px]"
             />
             <h1 className="text-[26px] sm:text-[28px] md:text-[32px] leading-tight font-bold text-black mb-4 text-center">
-              {greeting()} User, <br /> How Are You Feeling Today?
+              {greeting()} {user?.name}, <br /> How Are You Feeling Today?
             </h1>
             <div className="flex flex-col xl:flex-row gap-9 justify-center items-center w-full">
               <DateCard imageSrc="/assets/rectangle.png" />

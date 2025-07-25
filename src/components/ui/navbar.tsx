@@ -3,29 +3,21 @@ import { UserRound, Menu, X } from 'lucide-react';
 import Logo from '/assets/logo.svg';
 import Button from './button';
 import { useState, useEffect } from 'react';
-import { isLoggedIn } from '../../utils/auth';
+import { useUser } from '../../context/usercontext';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const handleLogin = () => {
-    setIsLogin(!isLogin);
-    if (!isLogin) {
-      localStorage.setItem('isLogin', 'true');
-    } else {
-      localStorage.removeItem('isLogin');
-    }
-  };
+  const { user } = useUser();
+
+  const isLogin = !!user;
 
   const handleScroll = () => {
     setIsScrolled(window.scrollY > 0);
   };
 
   useEffect(() => {
-    setIsLogin(isLoggedIn());
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -74,7 +66,6 @@ const Navbar = () => {
             ) : (
               <Link to="/login">
                 <Button
-                  onClick={handleLogin}
                   className="bg-[#633796] border-[#341A55] text-white hover:bg-[#7a4bb0] px-4 py-0 rounded-3xl font-spartan font-semibold"
                 >
                   Log In
@@ -106,7 +97,6 @@ const Navbar = () => {
               <Link to="/login">
                 <Button
                   onClick={() => {
-                    handleLogin();
                     setIsMobileMenuOpen(false);
                   }}
                   className="bg-[#633796] border-[#341A55] text-white hover:bg-[#7a4bb0] px-4 py-0 rounded-3xl font-spartan font-semibold w-full"

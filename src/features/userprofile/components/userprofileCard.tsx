@@ -12,6 +12,7 @@ import MenuItem from "../components/menuitem";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { logout } from "../../../utils/auth";
+import { useUser } from "../../../context/usercontext";
 
 interface UserProfileCardProps {
   profile: {
@@ -27,6 +28,7 @@ const UserProfileCard = ({ profile }: UserProfileCardProps) => {
   const navigate = useNavigate();
   const [notificationsOn, setNotificationsOn] = useState(true);
   const [language, setLanguage] = useState("English");
+  const { setUser } = useUser();
 
   const handleToggleNotifications = () => {
     setNotificationsOn(!notificationsOn);
@@ -44,6 +46,7 @@ const UserProfileCard = ({ profile }: UserProfileCardProps) => {
 
   const handleLogout = () => {
     logout();
+    setUser(null);
     navigate("/");
   }
 

@@ -23,7 +23,7 @@ export const getPaymentSpecialist = async (id: number) => {
     const token = getToken();
     if (!token) throw new Error("User is not authenticated");
 
-    const res = await api.get(`/payment/consultan/snap/${id}`, {
+    const res = await api.get(`/payment/consultan/${id}`, {
         headers: { 
             Authorization: `Bearer ${token}` 
         },
