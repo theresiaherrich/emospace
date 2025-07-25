@@ -108,7 +108,7 @@ const PremiumContainer = () => {
                     ? parseInt(selectedPremium.price.replace(/[^0-9]/g, ""))
                     : 0
                 }
-                message={`Lanjutkan pembayaran sebesar`}
+                message={`Continue payment amount`}
             />
             )}
         </div>
